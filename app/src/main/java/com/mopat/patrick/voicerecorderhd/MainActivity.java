@@ -2,6 +2,7 @@ package com.mopat.patrick.voicerecorderhd;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -11,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener {
+public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
     private Button recordButton, playButton, stopButton, pauseButton;
     private Recorder recorder;
@@ -76,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
                     recording.addPlaybackListener(MainActivity.this);
                     recording.addCompletionListener(MainActivity.this);
+                    recording.addPauseListener(MainActivity.this);
+                    recording.addPlayListener(MainActivity.this);
+                    recording.addStopListener(MainActivity.this);
                 }
             }
         });
@@ -85,11 +89,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 if (recording != null) {
                     if (playButton.getText().equals("Play")) {
-                        playButton.setText("Pause");
                         recording.play(seekBar.getProgress() * 2);
                     } else {
                         recording.pause();
-                        playButton.setText("Play");
                     }
                 }
             }
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 recording.stop();
                 playButton.setText("Play");
-                seekBar.setProgress(0);
+                //seekBar.setProgress(0);
             }
         });
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +135,18 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
+    private double byteToInt(int bytesread) {
+        return (bytesread * 1000) / (Config.sampleRate * 2);
+    }
+
+    private String formatTime(double timeInMs) {
+        return String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
+                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
+                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
+        );
+    }
+
     @Override
     public void playback(final int bytesread) {
         this.runOnUiThread(new Runnable() {
@@ -148,27 +162,51 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
-    private double byteToInt(int bytesread) {
-        return (bytesread * 1000) / (Config.sampleRate * 2);
-    }
-
-    private String formatTime(double timeInMs) {
-        return String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
-                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
-                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
-        );
-    }
-
     @Override
     public void playbackComplete() {
+        Log.d("COMPLETE", "COMPLETE");
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                playButton.setText("Play");
+                if (!playButton.getText().equals("Play"))
+                    playButton.setText("Play");
             }
         });
         recording.stop();
-        seekBar.setProgress(0);
+        //seekBar.setProgress(0);
+    }
+
+    @Override
+    public void playbackPaused() {
+        Log.d("PAUSE", "PAUSE");
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!playButton.getText().equals("Play"))
+                    playButton.setText("Play");
+            }
+        });
+    }
+
+    @Override
+    public void playbackPlay() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!playButton.getText().equals("Pause"))
+                    playButton.setText("Pause");
+            }
+        });
+    }
+
+    @Override
+    public void playbackStop() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!playButton.getText().equals("Play"))
+                    playButton.setText("Play");
+            }
+        });
     }
 }

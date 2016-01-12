@@ -22,10 +22,12 @@ public class Recording {
     private int fileLength, lastPlayed;
     private File file;
     private AudioManager am;
-    private boolean isPaused;
     private int state;
     private List<PlaybackListener> playbackListener = new ArrayList<>();
     private List<CompletionListener> completionListener = new ArrayList<>();
+    private List<PauseListener> pauseListener = new ArrayList<>();
+    private List<PlayListener> playListener = new ArrayList<>();
+    private List<StopListener> stopListener = new ArrayList<>();
 
     public Recording(String filePath, Context context) {
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -37,14 +39,11 @@ public class Recording {
     }
 
     public void stop() {
-        state = 0;
-        playback(0);
-        lastPlayed = 0;
+        playbackStop();
     }
 
     public void pause() {
-        state = 2;
-        playback(lastPlayed);
+        playbackPaused();
         Log.d("LASTPLAYED", String.valueOf(lastPlayed));
     }
 
@@ -66,7 +65,7 @@ public class Recording {
                     return;
                 }
 
-                int count = 256; // 512 kb
+                int count = 512; // 512 kb
 //Reading the file..
 
                 FileInputStream in = null;
@@ -75,10 +74,10 @@ public class Recording {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                int toSkip = (int) skip / 1000 * Config.sampleRate;
+                int toSkip = skipToNumberOfBytes(skip);
 
                 toSkip = (toSkip / 2 != 0 ? toSkip-- : toSkip);
-                int bytesread = (int) (skip / 1000 * Config.sampleRate), ret = 0;
+                int bytesread = toSkip, ret = 0;
 
                 //Log.d("SKIP", String.valueOf(bytesread));
                 try {
@@ -92,7 +91,6 @@ public class Recording {
                         if (state == 1) {
                             try {
                                 ret = in.read(byteData, 0, count);
-
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -100,25 +98,24 @@ public class Recording {
                                 //update(readBytes);
                                 at.write(byteData, 0, count);
                                 at.play();
-
+                                playbackPlay();
                                 byte[] readBytes = new byte[ret];
                                 System.arraycopy(byteData, 0, readBytes, 0, readBytes.length);
                                 bytesread += ret;
                                 lastPlayed = bytesread;
                                 playback(bytesread);
+
                                 //Log.d("BYTESREAD", String.valueOf(bytesread));
                             } else {
                                 playbackComplete();
                                 break;
                             }
-                        }
-                        else if (state == 2) {
+                        } else if (state == 2) {
                             playback(lastPlayed);
+                            playbackPaused();
                             break;
-                        }
-                        else if (state == 0) {
-                            lastPlayed = 0;
-                            playback(0);
+                        } else if (state == 0) {
+                            playbackStop();
                             break;
                         }
                     }
@@ -128,7 +125,8 @@ public class Recording {
                         e.printStackTrace();
                     }
 
-                    if(state == 1)playbackComplete();
+                    if (state == 1)
+                        playbackComplete();
                     at.stop();
                     at.release();
                 }
@@ -144,9 +142,16 @@ public class Recording {
         return state;
     }
 
-    public int getLastPlayed(){
-        return lastPlayed;
+    public int getDurationInMs() {
+        return (getFileSize() * 1000) / (Config.sampleRate * 2);
     }
+
+    private int skipToNumberOfBytes(double skip){
+        return (int) (skip / 1000 * Config.sampleRate);
+    }
+
+    /* Methods for interfaces*/
+    //region PlaybackListener
     public void addPlaybackListener(PlaybackListener listener) {
         playbackListener.add(listener);
     }
@@ -156,13 +161,11 @@ public class Recording {
             listener.playback(bytesread);
         }
     }
+    //endregion
 
+    //region CompletionListener
     public void addCompletionListener(CompletionListener listener) {
         completionListener.add(listener);
-    }
-
-    public int getDurationInMs() {
-        return (getFileSize() * 1000) / (Config.sampleRate * 2);
     }
 
     private void playbackComplete() {
@@ -172,4 +175,45 @@ public class Recording {
             listener.playbackComplete();
         }
     }
+    //endregion
+
+    //region PauseListener
+    public void addPauseListener(PauseListener listener) {
+        pauseListener.add(listener);
+    }
+
+    private void playbackPaused() {
+        state = 2;
+        for (PauseListener listener : pauseListener) {
+            listener.playbackPaused();
+        }
+    }
+    //endregion
+
+    //region PlayListener
+    public void addPlayListener(PlayListener listener) {
+        playListener.add(listener);
+    }
+
+    private void playbackPlay() {
+        for (PlayListener listener : playListener) {
+            listener.playbackPlay();
+        }
+    }
+    //endregion
+
+    //region StopListener
+    public void addStopListener(StopListener listener) {
+        stopListener.add(listener);
+    }
+
+    private void playbackStop() {
+        playback(0);
+        state = 0;
+        lastPlayed = 0;
+        for (StopListener listener : stopListener) {
+            listener.playbackStop();
+        }
+    }
+    //endregion
 }

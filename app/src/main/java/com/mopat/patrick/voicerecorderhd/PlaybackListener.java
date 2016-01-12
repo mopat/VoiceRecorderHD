@@ -10,3 +10,15 @@ interface PlaybackListener {
 interface CompletionListener {
     void playbackComplete();
 }
+
+interface PauseListener {
+    void playbackPaused();
+}
+
+interface PlayListener {
+    void playbackPlay();
+}
+
+interface StopListener {
+    void playbackStop();
+}

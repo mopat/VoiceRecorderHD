@@ -1,5 +1,6 @@
 package com.mopat.patrick.voicerecorderhd;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button recordButton, playButton, stopButton, pauseButton;
+    private Button recordButton, playButton, stopButton, myRecordingsButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         playButton = (Button) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
-        pauseButton = (Button) findViewById(R.id.pause_button);
+        myRecordingsButton = (Button) findViewById(R.id.my_recordings_button);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         recorder = new Recorder();
@@ -104,10 +105,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 //seekBar.setProgress(0);
             }
         });
-        pauseButton.setOnClickListener(new View.OnClickListener() {
+        myRecordingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(MainActivity.this, MyRecordingsActivity.class);
+                startActivity(i);
             }
         });
     }

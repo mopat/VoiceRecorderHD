@@ -23,10 +23,10 @@
         android:text="Play" />
 
     <Button
-        android:id="@+id/pause_button"
+        android:id="@+id/my_recordings_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pause" />
+        android:text="MyRecording" />
 
     <Button
         android:id="@+id/stop_button"

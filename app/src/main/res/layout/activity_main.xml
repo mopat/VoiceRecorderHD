@@ -33,13 +33,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Stop" />
-
-
-    <Button
-        android:id="@+id/samplerate_button"
+    <Spinner
+        android:id="@+id/samplerate_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Quality" />
+        android:entries="@array/samplerate_array"
+        android:prompt="@string/samplerate_prompt" />
 
     <SeekBar
         android:id="@+id/seekbar_main"

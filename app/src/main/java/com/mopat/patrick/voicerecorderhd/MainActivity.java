@@ -1,8 +1,11 @@
 package com.mopat.patrick.voicerecorderhd;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,19 +13,25 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button recordButton, playButton, stopButton, myRecordingsButton, samplerateButton;
+    private Button recordButton, playButton, stopButton, myRecordingsButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
     private TextView playbackTime, durationTime;
+    private Spinner samplerateSpinner;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         init();
         initListeners();
         initSeekBar();
+        loadSampleRate();
     }
 
     @Override
@@ -55,31 +65,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
         myRecordingsButton = (Button) findViewById(R.id.my_recordings_button);
-        samplerateButton = (Button) findViewById(R.id.samplerate_button);
+        samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         recorder = new Recorder();
-    }
 
-    private void showSamplerateAlertDialog() {
-        LayoutInflater inflater = getLayoutInflater();
-        View dialoglayout = inflater.inflate(R.layout.samplerate_alert_dialog, null);
-        AlertDialog.Builder sampleRateAlertDialog = new AlertDialog.Builder(this);
-        sampleRateAlertDialog.setTitle("Quality");
-        sampleRateAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        sampleRateAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        sampleRateAlertDialog.setView(dialoglayout);
-        sampleRateAlertDialog.show();
+        res = getResources();
     }
 
     private void initListeners() {
@@ -131,12 +122,34 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 startActivity(i);
             }
         });
-        samplerateButton.setOnClickListener(new View.OnClickListener() {
+        samplerateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                showSamplerateAlertDialog();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = parent.getItemAtPosition(position).toString();
+                Config.sampleRate = Integer.valueOf(selected);
+                storeSampleRate(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
+    }
+
+    private void storeSampleRate(int position) {
+        SharedPreferences prefs = this.getSharedPreferences(res.getString(R.string.shared_preferences_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putInt(res.getString(R.string.samplerate_key, position), position);
+        edit.commit();
+        edit.apply();
+    }
+
+    private void loadSampleRate() {
+        SharedPreferences prefs = this.getSharedPreferences(res.getString(R.string.shared_preferences_key), Context.MODE_PRIVATE); //1
+        int position = prefs.getInt(res.getString(R.string.samplerate_key), Context.MODE_PRIVATE); //2
+        samplerateSpinner.setSelection(position);
+        Config.sampleRate = Integer.parseInt((String) samplerateSpinner.getSelectedItem());
     }
 
     private void initSeekBar() {

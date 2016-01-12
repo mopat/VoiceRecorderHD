@@ -1,0 +1,29 @@
+    private void showSamplerateAlertDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.samplerate_alert_dialog, null);
+        AlertDialog.Builder sampleRateAlertDialog = new AlertDialog.Builder(this);
+        sampleRateAlertDialog.setTitle("Quality");
+        sampleRateAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        sampleRateAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        sampleRateAlertDialog.setView(dialoglayout);
+        sampleRateAlertDialog.show();
+        SamplerateListitem[] srli = new SamplerateListitem[]{new SamplerateListitem("22", false), new SamplerateListitem("44", false)};
+        samplerateListView = (ListView) dialoglayout.findViewById(R.id.samplerate_listview);
+        samplerateListView.setAdapter(new SamplerateArrayAdapater(getApplicationContext(), srli));
+        samplerateListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("position", String.valueOf(position));
+            }
+        });
+    }

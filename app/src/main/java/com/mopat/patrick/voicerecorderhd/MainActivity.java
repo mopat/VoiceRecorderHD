@@ -1,6 +1,7 @@
 package com.mopat.patrick.voicerecorderhd;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +23,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private Recording recording;
     private SeekBar seekBar;
     private TextView playbackTime, durationTime;
-    private AlertDialog.Builder sampleRateAlertDialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         init();
         initListeners();
         initSeekBar();
-        initSamplerateAlertDialog();
     }
 
     @Override
@@ -63,11 +61,25 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recorder = new Recorder();
     }
 
-    private void initSamplerateAlertDialog() {
+    private void showSamplerateAlertDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialoglayout = inflater.inflate(R.layout.samplerate_alert_dialog, null);
-        sampleRateAlertDialog = new AlertDialog.Builder(this);
+        AlertDialog.Builder sampleRateAlertDialog = new AlertDialog.Builder(this);
+        sampleRateAlertDialog.setTitle("Quality");
+        sampleRateAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        sampleRateAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         sampleRateAlertDialog.setView(dialoglayout);
+        sampleRateAlertDialog.show();
     }
 
     private void initListeners() {
@@ -122,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         samplerateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sampleRateAlertDialog.show();
+                showSamplerateAlertDialog();
             }
         });
     }

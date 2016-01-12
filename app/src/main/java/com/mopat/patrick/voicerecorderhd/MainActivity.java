@@ -2,6 +2,8 @@ package com.mopat.patrick.voicerecorderhd;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -51,6 +53,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         isPlaying = false;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
     private void initListeners() {
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,28 +79,18 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 }
             }
         });
+
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (recording != null) {
-                    //Log.d("STATE", String.valueOf(recording.getState()));
-                    recording.play(seekBar.getProgress() * 2);
-            /*        if (!isPlaying && !isPaused) {
-                        isPaused = false;
-                        isPlaying = true;
-                        recording.play(0);
+                    if (playButton.getText().equals("Play")) {
                         playButton.setText("Pause");
-                    } else if (isPlaying) {
-                        isPlaying = false;
-                        isPaused = true;
+                        recording.play(seekBar.getProgress() * 2);
+                    } else {
                         recording.pause();
                         playButton.setText("Play");
-                    } else if (isPaused) {
-                        isPlaying = true;
-                        isPaused = false;
-                        recording.play(lastPlayedBytes * 2);
-                        playButton.setText("Pause");
-                    }*/
+                    }
                 }
             }
         });
@@ -99,13 +98,14 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onClick(View v) {
                 recording.stop();
+                playButton.setText("Play");
                 seekBar.setProgress(0);
             }
         });
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recording.pause();
+
             }
         });
     }
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
-    private double byteToInt(int bytesread){
+    private double byteToInt(int bytesread) {
         return (bytesread * 1000) / (Config.sampleRate * 2);
     }
 
@@ -160,9 +160,14 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         );
     }
 
-
     @Override
     public void playbackComplete() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playButton.setText("Play");
+            }
+        });
         recording.stop();
         seekBar.setProgress(0);
     }

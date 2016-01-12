@@ -1,9 +1,11 @@
 package com.mopat.patrick.voicerecorderhd;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -15,14 +17,13 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button recordButton, playButton, stopButton, myRecordingsButton;
+    private Button recordButton, playButton, stopButton, myRecordingsButton, samplerateButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
     private TextView playbackTime, durationTime;
+    private AlertDialog.Builder sampleRateAlertDialog;
 
-    private int lastPlayedBytes;
-    private boolean isPaused, isPlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,16 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         init();
         initListeners();
         initSeekBar();
+        initSamplerateAlertDialog();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
 
     private void createDirectory() {
         if (!Absolutes.DIRECTORY.exists()) {
@@ -47,19 +57,17 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
         myRecordingsButton = (Button) findViewById(R.id.my_recordings_button);
+        samplerateButton = (Button) findViewById(R.id.samplerate_button);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         recorder = new Recorder();
-
-        isPaused = false;
-        isPlaying = false;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return true;
+    private void initSamplerateAlertDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.samplerate_alert_dialog, null);
+        sampleRateAlertDialog = new AlertDialog.Builder(this);
+        sampleRateAlertDialog.setView(dialoglayout);
     }
 
     private void initListeners() {
@@ -102,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 recording.stop();
                 playButton.setText("Play");
-                //seekBar.setProgress(0);
             }
         });
         myRecordingsButton.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +117,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, MyRecordingsActivity.class);
                 startActivity(i);
+            }
+        });
+        samplerateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sampleRateAlertDialog.show();
             }
         });
     }
@@ -157,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 double currentTime = byteToInt(bytesread);
 
                 seekBar.setProgress((int) (currentTime));
-                lastPlayedBytes = (int) (currentTime);
+                //lastPlayedBytes = (int) (currentTime);
                 String currentTimeString = formatTime(currentTime);
                 playbackTime.setText(currentTimeString);
             }

@@ -8,7 +8,10 @@
     <string name="samplerate_key">samplerate</string>
     <string-array name="samplerate_array">
         <item>44100</item>
+        <item>32000</item>
         <item>22050</item>
+        <item>16000</item>
+        <item>11000</item>
         <item>8000</item>
     </string-array>
 </resources>

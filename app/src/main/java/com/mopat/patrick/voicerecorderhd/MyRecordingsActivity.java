@@ -93,6 +93,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
         );
     }
+
     private void displayMyRecordings() {
         String path = Absolutes.DIRECTORY.toString();
         Log.d("Files", "Path: " + path);
@@ -110,11 +111,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
             }
             IMusicMetadata metadata = srcSet.getSimplified();
             String samplerate = metadata.getComment();
-
+            String filename = file[i].getName();
             String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
             String filesize = String.valueOf(file[i].length());
             //Log.d("Files", "FileName:" + file[i].getName());
-            myRecordings.add(new MyRecordingsListitem(file[i].getName(), samplerate, filesize, duration, false));
+            myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
         }
         myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
         myRecordingsListView.setAdapter(myRecordingsArrayAdapter);

@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
         createDirectory();
         init();
+       // checkIntent();
         initListeners();
         initSeekBar();
         loadSampleRate();
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             if (!Absolutes.DIRECTORY.mkdir()) ; //directory is created;
         }
     }
+
 
     private void init() {
         recordButton = (Button) findViewById(R.id.record_button);
@@ -135,6 +137,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
             }
         });
+    }
+
+    private void checkIntent(){
+        if(getIntent() != null){
+            String filename = getIntent().getStringExtra("filename");
+            recording = new Recording(filename, this);
+        }
     }
 
     private void storeSampleRate(int position) {

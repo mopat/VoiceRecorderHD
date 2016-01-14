@@ -3,11 +3,12 @@ package com.mopat.patrick.voicerecorderhd;
 /**
  * Created by Patrick on 12.01.2016.
  */
-public class SamplerateListitem {
-    private String samplerate;
+public class MyRecordingsListitem {
+    private String filename, samplerate;
     private boolean checked;
 
-    public SamplerateListitem(String samplerate, boolean checked){
+    public MyRecordingsListitem(String filename, String samplerate, boolean checked){
+        this.filename = filename;
         this.samplerate = samplerate;
         this.checked = checked;
     }
@@ -17,7 +18,7 @@ public class SamplerateListitem {
     }
 
     public String getName() {
-        return String.valueOf(samplerate);
+        return String.valueOf(filename);
     }
 
     public boolean isChecked(){

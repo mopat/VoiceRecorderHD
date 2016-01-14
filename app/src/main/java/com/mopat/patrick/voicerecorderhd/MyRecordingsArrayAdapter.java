@@ -1,23 +1,22 @@
 package com.mopat.patrick.voicerecorderhd;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
-class SamplerateArrayAdapater extends BaseAdapter {
-    SamplerateListitem[] samplerates;
+import java.util.ArrayList;
+
+class MyRecordingsArrayAdapter extends BaseAdapter {
+    ArrayList<MyRecordingsListitem> recordings;
     Context context;
     private static LayoutInflater inflater;
 
-    public SamplerateArrayAdapater(Context context, SamplerateListitem[] samplerates) {
+    public MyRecordingsArrayAdapter(Context context, ArrayList<MyRecordingsListitem> recordings) {
         this.context = context;
-        this.samplerates = samplerates;
+        this.recordings = recordings;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -25,7 +24,7 @@ class SamplerateArrayAdapater extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return samplerates.length;
+        return recordings.size();
     }
 
     @Override
@@ -42,9 +41,9 @@ class SamplerateArrayAdapater extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if (vi == null)
-            vi = inflater.inflate(R.layout.samplerate_list_item, null);
-        TextView text = (TextView) vi.findViewById(R.id.samplerate_value);
-        text.setText(samplerates[position].getName());
+            vi = inflater.inflate(R.layout.my_recordings_listitem, null);
+        TextView text = (TextView) vi.findViewById(R.id.filename);
+        text.setText(recordings.get(position).getName());
         return vi;
     }
 }

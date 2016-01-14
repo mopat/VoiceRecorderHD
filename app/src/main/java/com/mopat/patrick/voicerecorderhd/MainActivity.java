@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
         createDirectory();
         init();
-       // checkIntent();
+        checkIntent();
         initListeners();
         initSeekBar();
         loadSampleRate();
@@ -85,15 +85,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     recordButton.setText("START");
-                    recording = new Recording(recorder.getFilePath(), getApplicationContext());
-                    durationTime.setText(formatTime(recording.getDurationInMs()));
-                    seekBar.setMax(recording.getDurationInMs());
-
-                    recording.addPlaybackListener(MainActivity.this);
-                    recording.addCompletionListener(MainActivity.this);
-                    recording.addPauseListener(MainActivity.this);
-                    recording.addPlayListener(MainActivity.this);
-                    recording.addStopListener(MainActivity.this);
+                    initRecording(recorder.getFilePath());
                 }
             }
         });
@@ -122,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, MyRecordingsActivity.class);
                 startActivity(i);
+                recording.stop();
             }
         });
         samplerateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -139,10 +132,23 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
-    private void checkIntent(){
-        if(getIntent() != null){
-            String filename = getIntent().getStringExtra("filename");
-            recording = new Recording(filename, this);
+    private void initRecording(String filePath) {
+        recording = new Recording(filePath, getApplicationContext());
+        durationTime.setText(formatTime(recording.getDurationInMs()));
+        seekBar.setMax(recording.getDurationInMs());
+
+        recording.addPlaybackListener(MainActivity.this);
+        recording.addCompletionListener(MainActivity.this);
+        recording.addPauseListener(MainActivity.this);
+        recording.addPlayListener(MainActivity.this);
+        recording.addStopListener(MainActivity.this);
+    }
+
+    private void checkIntent() {
+        if (getIntent().hasExtra("filepath")) {
+            String filePath = getIntent().getStringExtra("filepath");
+            Log.d("FILEPATH", filePath);
+            initRecording(filePath);
         }
     }
 

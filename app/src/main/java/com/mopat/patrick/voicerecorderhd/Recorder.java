@@ -23,7 +23,7 @@ public class Recorder {
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private AudioRecord recorder = null;
     private Thread recordingThread, stopRecordingThread = null;
-    private boolean isRecording = false, enableRecording = false;
+    private boolean isRecording = false;
     private String recordingPath = null;
     long recordTime, st;
     int written = 0;
@@ -88,7 +88,6 @@ public class Recorder {
                 e.printStackTrace();
             }
         }
-        written = 0;
     }
 
 

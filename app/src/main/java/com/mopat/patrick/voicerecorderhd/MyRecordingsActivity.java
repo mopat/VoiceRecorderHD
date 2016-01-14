@@ -51,9 +51,10 @@ public class MyRecordingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
                 String filename = (String) filenameTextView.getText();
-                Log.d("FILENAME", filename);
+                String filePath = Absolutes.DIRECTORY + "/" +filename;
+                Log.d("FILENAME", Absolutes.DIRECTORY + "/" +filename);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
-                i.putExtra("filename", filename);
+                i.putExtra("filepath", filePath);
                 startActivity(i);
             }
         });

@@ -20,6 +20,7 @@ import org.cmc.music.myid3.MyID3;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class MyRecordingsActivity extends AppCompatActivity {
     private ListView myRecordingsListView;
@@ -56,7 +57,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
                 String filename = (String) filenameTextView.getText();
-                String filePath = Absolutes.DIRECTORY + "/" +filename;
+                String filePath = Absolutes.DIRECTORY + "/" + filename;
                 Log.d("FILENAME", Absolutes.DIRECTORY + "/" + filename);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
                 i.putExtra("filepath", filePath);
@@ -65,24 +66,33 @@ public class MyRecordingsActivity extends AppCompatActivity {
             }
         });
     }
-private String getSampleRate(String filepath){
-    File src = new File(filepath);
-    MusicMetadataSet srcSet = null;
-    try {
-        srcSet = new MyID3().read(src);
-    } catch (IOException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-    } // read metadata
 
-    IMusicMetadata metadata = srcSet.getSimplified();
+    private String getSampleRate(String filepath) {
+        File src = new File(filepath);
+        MusicMetadataSet srcSet = null;
+        try {
+            srcSet = new MyID3().read(src);
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } // read metadata
 
-    return metadata.getComment();
-}
+        IMusicMetadata metadata = srcSet.getSimplified();
+
+        return metadata.getComment();
+    }
+
     private void setupListView() {
 
     }
 
+    private String formatTime(double timeInMs) {
+        return String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
+                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
+                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
+        );
+    }
     private void displayMyRecordings() {
         String path = Absolutes.DIRECTORY.toString();
         Log.d("Files", "Path: " + path);
@@ -91,8 +101,20 @@ private String getSampleRate(String filepath){
         ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
         Log.d("Files", "Size: " + file.length);
         for (int i = 0; i < file.length; i++) {
+            MusicMetadataSet srcSet = null;
+            try {
+                srcSet = new MyID3().read(file[i]);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            IMusicMetadata metadata = srcSet.getSimplified();
+            String samplerate = metadata.getComment();
+
+            String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+            String filesize = String.valueOf(file[i].length());
             //Log.d("Files", "FileName:" + file[i].getName());
-            myRecordings.add(new MyRecordingsListitem(file[i].getName(), "0", false));
+            myRecordings.add(new MyRecordingsListitem(file[i].getName(), samplerate, filesize, duration, false));
         }
         myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
         myRecordingsListView.setAdapter(myRecordingsArrayAdapter);

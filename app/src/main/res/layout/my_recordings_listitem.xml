@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="100dp"
     android:descendantFocusability="blocksDescendants">
 
     <TextView
@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
         android:text="FILENAME"
         android:textColor="#000"
         android:textSize="@dimen/alert_font_size" />
@@ -22,17 +21,36 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@id/filename"
-        android:layout_centerVertical="true"
-        android:text=""
+        android:text="44100"
         android:textColor="#000"
         android:textSize="@dimen/alert_font_size" />
 
+    <TextView
+        android:id="@+id/size_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filename"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/samplerate_value"
+        android:text="250kb"
+        android:textColor="#000"
+        android:textSize="@dimen/alert_font_size" />
+
+    <TextView
+        android:id="@+id/duration_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filename"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@id/size_value"
+        android:text="22100"
+        android:textColor="#000"
+        android:textSize="@dimen/alert_font_size" />
     <CheckBox
         android:id="@+id/samplerate_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/filename"
-        android:layout_centerVertical="true" />
+        android:layout_below="@id/filename" />
 </RelativeLayout>

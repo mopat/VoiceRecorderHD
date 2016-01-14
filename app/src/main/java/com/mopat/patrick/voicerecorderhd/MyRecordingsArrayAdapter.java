@@ -42,8 +42,15 @@ class MyRecordingsArrayAdapter extends BaseAdapter {
         View vi = convertView;
         if (vi == null)
             vi = inflater.inflate(R.layout.my_recordings_listitem, null);
-        TextView text = (TextView) vi.findViewById(R.id.filename);
-        text.setText(recordings.get(position).getName());
+        TextView filename = (TextView) vi.findViewById(R.id.filename);
+        TextView samplerate = (TextView)vi.findViewById(R.id.samplerate_value);
+        TextView size = (TextView)vi.findViewById(R.id.size_value);
+        TextView duration = (TextView)vi.findViewById(R.id.duration_value);
+
+        filename.setText(recordings.get(position).getName());
+        samplerate.setText(recordings.get(position).getSamplerate());
+        size.setText(recordings.get(position).getFilesize());
+        duration.setText(recordings.get(position).getDuration());
         return vi;
     }
 }

@@ -13,7 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.cmc.music.metadata.IMusicMetadata;
+import org.cmc.music.metadata.MusicMetadataSet;
+import org.cmc.music.myid3.MyID3;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MyRecordingsActivity extends AppCompatActivity {
@@ -52,14 +57,28 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
                 String filename = (String) filenameTextView.getText();
                 String filePath = Absolutes.DIRECTORY + "/" +filename;
-                Log.d("FILENAME", Absolutes.DIRECTORY + "/" +filename);
+                Log.d("FILENAME", Absolutes.DIRECTORY + "/" + filename);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
                 i.putExtra("filepath", filePath);
+                i.putExtra("samplerate", getSampleRate(filePath));
                 startActivity(i);
             }
         });
     }
+private String getSampleRate(String filepath){
+    File src = new File(filepath);
+    MusicMetadataSet srcSet = null;
+    try {
+        srcSet = new MyID3().read(src);
+    } catch (IOException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+    } // read metadata
 
+    IMusicMetadata metadata = srcSet.getSimplified();
+
+    return metadata.getComment();
+}
     private void setupListView() {
 
     }

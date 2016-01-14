@@ -4,10 +4,17 @@ package com.mopat.patrick.voicerecorderhd;
  * Created by Patrick on 10.01.2016.
  */
 
+import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
+
+import org.cmc.music.common.ID3WriteException;
+import org.cmc.music.metadata.IMusicMetadata;
+import org.cmc.music.metadata.MusicMetadata;
+import org.cmc.music.metadata.MusicMetadataSet;
+import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +26,7 @@ import java.io.IOException;
  * Created by Patrick on 04.01.2016.
  */
 public class Recorder {
+    private Context context;
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private AudioRecord recorder = null;
@@ -26,18 +34,23 @@ public class Recorder {
     private boolean isRecording = false;
     private String recordingPath = null;
     long recordTime, st;
-    int written = 0;
+    private int written = 0;
     int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
             RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 
+    private int samplerate;
     int BufferElements2Rec = 512 / 2; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
-    File recording;
+    private File recording;
 
+    public Recorder(Context context) {
+        this.context = context;
+    }
 
     public void startRecording() {
+        this.samplerate = Config.sampleRate;
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                Config.sampleRate, RECORDER_CHANNELS,
+                samplerate, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
 
 
@@ -64,13 +77,33 @@ public class Recorder {
         return bytes;
     }
 
+    private void setMetadata() {
+        MusicMetadataSet srcSet = null;
+        try {
+            srcSet = new MyID3().read(recording);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MusicMetadata musicMetadata = new MusicMetadata("name");
+        musicMetadata.setArtist(context.getResources().getString(R.string.app_name));
+        musicMetadata.setComment(String.valueOf(Config.sampleRate));
+
+        try {
+            new MyID3().update(recording, srcSet, musicMetadata);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ID3WriteException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void writeAudioDataToFile() {
         // Write the output audio in byte
-        recording = new File(Absolutes.DIRECTORY + "/" + String.valueOf(System.currentTimeMillis())+ ".wav");
+        recording = new File(Absolutes.DIRECTORY + "/" + String.valueOf(System.currentTimeMillis()) + ".mp3");
         short sData[] = new short[BufferElements2Rec];
         recordingPath = recording.getAbsolutePath();
         FileOutputStream os = null;
-
+        ;
         try {
             os = new FileOutputStream(recordingPath);
         } catch (FileNotFoundException e) {
@@ -80,7 +113,7 @@ public class Recorder {
         while (isRecording) {
             recorder.read(sData, 0, BufferElements2Rec);
             try {
-                  byte bData[] = short2byte(sData);
+                byte bData[] = short2byte(sData);
 
                 os.write(bData, 0, BufferElements2Rec * BytesPerElement);
                 written += bData.length;
@@ -88,8 +121,9 @@ public class Recorder {
                 e.printStackTrace();
             }
         }
+        setMetadata();
+        written = 0;
     }
-
 
     public void stopRecording() {
         stopRecordingThread = new Thread(new Runnable() {
@@ -117,5 +151,9 @@ public class Recorder {
 
     public String getFilePath() {
         return recordingPath;
+    }
+
+    public int getSamplerate(){
+        return samplerate;
     }
 }

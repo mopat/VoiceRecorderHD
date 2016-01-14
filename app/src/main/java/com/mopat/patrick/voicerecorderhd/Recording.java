@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.util.Log;
 
 import java.io.File;
@@ -17,25 +19,29 @@ import java.util.List;
  * Created by Patrick on 10.01.2016.
  */
 public class Recording {
+    private Context context;
     private String filepPath;
     private byte[] byteData;
     private int fileLength, lastPlayed;
     private File file;
     private AudioManager am;
     private int state;
+    private int samplerate;
     private List<PlaybackListener> playbackListener = new ArrayList<>();
     private List<CompletionListener> completionListener = new ArrayList<>();
     private List<PauseListener> pauseListener = new ArrayList<>();
     private List<PlayListener> playListener = new ArrayList<>();
     private List<StopListener> stopListener = new ArrayList<>();
 
-    public Recording(String filePath, Context context) {
+    public Recording(String filePath, int samplerate, Context context) {
+        this.context = context;
         am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         this.filepPath = filePath;
         this.file = new File(filePath);
         this.fileLength = (int) file.length();
         this.byteData = new byte[fileLength];
         this.state = 0;
+        this.samplerate = samplerate;
     }
 
     public void stop() {
@@ -98,7 +104,8 @@ public class Recording {
                                 //update(readBytes);
                                 at.write(byteData, 0, count);
                                 at.play();
-                                playbackPlay();
+                                Log.d("SampleRate", String.valueOf(at.getSampleRate()));
+                                        playbackPlay();
                                 byte[] readBytes = new byte[ret];
                                 System.arraycopy(byteData, 0, readBytes, 0, readBytes.length);
                                 bytesread += ret;

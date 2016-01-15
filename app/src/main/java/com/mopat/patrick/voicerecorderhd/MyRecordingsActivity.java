@@ -1,5 +1,7 @@
 package com.mopat.patrick.voicerecorderhd;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,6 +65,28 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 i.putExtra("filepath", filePath);
                 i.putExtra("samplerate", getSampleRate(filePath));
                 startActivity(i);
+            }
+        });
+        myRecordingsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+                TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
+                String filename = (String) filenameTextView.getText();
+                String filePath = Absolutes.DIRECTORY + "/" + filename;
+                final File file = new File(filePath);
+                AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
+                adb.setTitle("Delete?");
+                adb.setMessage("Are you sure you want to delete " + filenameTextView.getText());
+                adb.setNegativeButton("Cancel", null);
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        boolean delete = file.delete();
+                        displayMyRecordings();
+                    }
+                });
+                adb.show();
+                
+                return true;
             }
         });
     }

@@ -82,9 +82,9 @@ public class Recording {
                 }
                 int toSkip = skipToNumberOfBytes(skip);
 
-               // toSkip = (toSkip % 2 != 0 ? toSkip-- : toSkip);
-                if(toSkip % 2 != 0)
-                toSkip--;
+                // toSkip = (toSkip % 2 != 0 ? toSkip-- : toSkip);
+                if (toSkip % 2 != 0)
+                    toSkip--;
                 int bytesread = toSkip, ret = 0;
 
                 Log.d("SKIP", String.valueOf(toSkip));
@@ -93,6 +93,7 @@ public class Recording {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                byte[] byties = invert(byteData);
                 if (state != 1) {
                     state = 1;
                     while (bytesread <= fileLength) {
@@ -140,6 +141,15 @@ public class Recording {
                 }
             }
         }).start();
+    }
+
+    private byte[] invert(byte[] bytes) {
+    byte[] invertedBytes = new byte[bytes.length];
+
+        for(int i = 0; i < bytes.length; i++){
+            invertedBytes[bytes.length-i-1] = bytes[i];
+        }
+        return invertedBytes;
     }
 
     public int getFileSize() {

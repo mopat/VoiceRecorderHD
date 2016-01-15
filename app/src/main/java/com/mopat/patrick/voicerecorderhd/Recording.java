@@ -82,10 +82,12 @@ public class Recording {
                 }
                 int toSkip = skipToNumberOfBytes(skip);
 
-                toSkip = (toSkip / 2 != 0 ? toSkip-- : toSkip);
+               // toSkip = (toSkip % 2 != 0 ? toSkip-- : toSkip);
+                if(toSkip % 2 != 0)
+                toSkip--;
                 int bytesread = toSkip, ret = 0;
 
-                //Log.d("SKIP", String.valueOf(bytesread));
+                Log.d("SKIP", String.valueOf(toSkip));
                 try {
                     in.skip((toSkip));
                 } catch (IOException e) {
@@ -104,8 +106,7 @@ public class Recording {
                                 //update(readBytes);
                                 at.write(byteData, 0, count);
                                 at.play();
-                                Log.d("SampleRate", String.valueOf(at.getSampleRate()));
-                                        playbackPlay();
+                                playbackPlay();
                                 byte[] readBytes = new byte[ret];
                                 System.arraycopy(byteData, 0, readBytes, 0, readBytes.length);
                                 bytesread += ret;
@@ -153,7 +154,7 @@ public class Recording {
         return (getFileSize() * 1000) / (Config.sampleRate * 2);
     }
 
-    private int skipToNumberOfBytes(double skip){
+    private int skipToNumberOfBytes(double skip) {
         return (int) (skip / 1000 * Config.sampleRate);
     }
 

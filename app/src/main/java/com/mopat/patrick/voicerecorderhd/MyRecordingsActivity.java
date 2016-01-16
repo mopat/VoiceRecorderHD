@@ -3,6 +3,7 @@ package com.mopat.patrick.voicerecorderhd;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import org.cmc.music.metadata.IMusicMetadata;
@@ -35,7 +37,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
     private Menu menu;
     private boolean allSelected = false;
-
+    private ShareActionProvider mShareActionProvider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_recordings, menu);
         this.menu = menu;
+
         return true;
     }
 
@@ -173,11 +176,19 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 toggleAllSelected();
                 selectUnselectAll();
                 return true;
-            case R.id.close_selection_mode:
+   /*         case R.id.close_selection_mode:
                 showDefaultActionBarIcons();
                 allSelected = false;
                 selectUnselectAll();
                 hideCheckBoxes();
+                return true;*/
+
+            case R.id.action_share:
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("audio/*");
+                sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, getSelectedItems());
+               // sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Uri.fromFile(new File(Absolutes.DIRECTORY +"/1.mp3")));
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
@@ -185,6 +196,22 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private ArrayList<Uri> getSelectedItems(){
+        ArrayList<Uri> fileUris = new ArrayList<>();
+        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+            View v = myRecordingsListView.getChildAt(i);
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+            TextView filenameTextView = (TextView) v.findViewById(R.id.filename);
+            if (checkBox.isChecked()) {
+                String filename = (String) filenameTextView.getText();
+                String filePath = Absolutes.DIRECTORY + "/" + filename;
+                Uri fileUri = Uri.parse(filePath);
+                fileUris.add(fileUri);
+            }
+        }
+        return fileUris;
     }
 
     private void deleteFiles() {

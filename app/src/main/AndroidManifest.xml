@@ -22,7 +22,6 @@
         </activity>
         <activity
             android:name=".MyRecordingsActivity"
-            android:label="@string/title_activity_my_recording"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

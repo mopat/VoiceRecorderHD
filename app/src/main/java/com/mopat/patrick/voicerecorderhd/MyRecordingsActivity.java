@@ -175,9 +175,8 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return true;
             case R.id.close_selection_mode:
                 showDefaultActionBarIcons();
-                allSelected = true;
+                allSelected = false;
                 selectUnselectAll();
-
                 hideCheckBoxes();
                 return true;
             default:

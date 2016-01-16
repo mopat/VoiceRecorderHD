@@ -33,6 +33,8 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private ListView myRecordingsListView;
     private MyRecordingsArrayAdapter myRecordingsArrayAdapter;
     private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
+    private Menu menu;
+    private boolean allSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_my_recordings, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -160,18 +163,23 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_multiselect:
-                for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-                    Log.d("COUNT", String.valueOf(i));
-                    View v = myRecordingsListView.getChildAt(i);
-                    CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
-                    checkBox.setVisibility(View.VISIBLE);
-                }
-                
+                hideDefaultActionBarIcons();
+                showCheckBoxes();
                 return true;
             case R.id.action_delete:
                 deleteFiles();
                 return true;
+            case R.id.select_unselect_all:
+                toggleAllSelected();
+                selectUnselectAll();
+                return true;
+            case R.id.close_selection_mode:
+                showDefaultActionBarIcons();
+                allSelected = true;
+                selectUnselectAll();
 
+                hideCheckBoxes();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -187,7 +195,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
         adb.setNegativeButton("Cancel", null);
         adb.setPositiveButton("Yes", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Log.d("CHILDCOUNT", String.valueOf(myRecordingsListView.getChildCount()));
                 for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
                     View v = myRecordingsListView.getChildAt(i);
                     CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
@@ -204,6 +211,49 @@ public class MyRecordingsActivity extends AppCompatActivity {
             }
         });
         adb.show();
+    }
+
+    private void hideDefaultActionBarIcons() {
+        menu.setGroupVisible(R.id.delete_select_share_group, true);
+        menu.setGroupVisible(R.id.main_menu_group, false);
+    }
+
+    private void showDefaultActionBarIcons() {
+        menu.setGroupVisible(R.id.delete_select_share_group, false);
+        menu.setGroupVisible(R.id.main_menu_group, true);
+    }
+
+    private void selectUnselectAll() {
+        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+            View v = myRecordingsListView.getChildAt(i);
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+            if (allSelected)
+                checkBox.setChecked(true);
+            else
+                checkBox.setChecked(false);
+        }
+    }
+
+    private void hideCheckBoxes() {
+        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+            View v = myRecordingsListView.getChildAt(i);
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+            checkBox.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void showCheckBoxes() {
+        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+            View v = myRecordingsListView.getChildAt(i);
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+            checkBox.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void toggleAllSelected() {
+        if (allSelected)
+            allSelected = false;
+        else allSelected = true;
     }
 }
 

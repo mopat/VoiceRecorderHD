@@ -10,11 +10,4 @@
     android:paddingRight="@dimen/alert_padding_right"
     android:paddingStart="@dimen/alert_padding_left">
 
-<EditText android:id="@+id/filename_edittext"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="FILENAME"
-    android:inputType="text"/>
-
-
 </FrameLayout>

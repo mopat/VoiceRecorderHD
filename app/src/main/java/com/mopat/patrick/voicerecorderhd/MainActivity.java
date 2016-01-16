@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
@@ -77,32 +79,32 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
     private void showSaveDialog() {
-        LayoutInflater inflater = getLayoutInflater();
-        final View dialoglayout = inflater.inflate(R.layout.save_file_alert_dialog, null);
-        final AlertDialog.Builder sampleRateAlertDialog = new AlertDialog.Builder(this);
-        AlertDialog dia = sampleRateAlertDialog.create();
+        final AlertDialog.Builder saveRecordingDialog = new AlertDialog.Builder(this);
 
-        sampleRateAlertDialog.setTitle("Save File?");
-
-        sampleRateAlertDialog.setView(dialoglayout);
-        final EditText filenameEditText = (EditText) dialoglayout.findViewById(R.id.filename_edittext);
+        saveRecordingDialog.setTitle("Save File?");
+        saveRecordingDialog.setCancelable(false);
+        final EditText filenameEditText = new EditText(MainActivity.this);
+        filenameEditText.setHint("Filename");
+        saveRecordingDialog.setView(filenameEditText);
         filenameEditText.setText(recorder.getRecordingFilename());
-        sampleRateAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        saveRecordingDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 String filename = filenameEditText.getText().toString();
                 recorder.renameFile(filename);
+                Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
             }
         });
-        sampleRateAlertDialog.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+        saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 recorder.deleteFile();
+                Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
             }
         });
-        sampleRateAlertDialog.show();
+        saveRecordingDialog.show();
     }
 
     private void initListeners() {

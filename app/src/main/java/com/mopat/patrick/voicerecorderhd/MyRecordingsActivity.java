@@ -85,6 +85,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         boolean delete = file.delete();
+                        myRecordings.clear();
                         displayMyRecordings();
                     }
                 });
@@ -140,16 +141,15 @@ public class MyRecordingsActivity extends AppCompatActivity {
             IMusicMetadata metadata = srcSet.getSimplified();
             String samplerate = metadata.getComment();
             String filename = file[i].getName();
-            Log.d("file",(String)samplerate);
-//            String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
-            //String filesize = String.valueOf(file[i].length());
-            //Log.d("Files", "FileName:" + file[i].getName());
-            //myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
+            Log.d("file", (String) samplerate);
+            String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+            String filesize = String.valueOf(file[i].length());
+            Log.d("Files", "FileName:" + file[i].getName());
+            myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
         }
-     /*   myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
+        myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
         myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
         myRecordingsArrayAdapter.notifyDataSetChanged();
-*/
     }
 
     @Override
@@ -160,35 +160,16 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_multiselect:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-
-                Log.d("CLICK", "CLICK");
-
                 for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
                     Log.d("COUNT", String.valueOf(i));
                     View v = myRecordingsListView.getChildAt(i);
                     CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
                     checkBox.setVisibility(View.VISIBLE);
-                    Log.d("ISCHECKED", String.valueOf(checkBox.isChecked()));
                 }
+                
                 return true;
             case R.id.action_delete:
-                for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-                    Log.d("COUNT", String.valueOf(i));
-                    View v = myRecordingsListView.getChildAt(i);
-                    CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
-                    TextView filenameTextView = (TextView) v.findViewById(R.id.filename);
-                    Log.d("filenameTextView", (String) filenameTextView.getText());
-                    if (checkBox.isChecked()) {
-                        String filename = (String) filenameTextView.getText();
-                        String filePath = Absolutes.DIRECTORY + "/" + filename;
-                        final File file = new File(filePath);
-                        boolean delete = file.delete();
-                        displayMyRecordings();
-                    }
-                    Log.d("ISCHECKED", String.valueOf(checkBox.isChecked()));
-                }
+                deleteFiles();
                 return true;
 
             default:
@@ -197,6 +178,32 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void deleteFiles() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
+        adb.setTitle("Delete files");
+        adb.setMessage("Are you sure you want to delete the selected files");
+        adb.setNegativeButton("Cancel", null);
+        adb.setPositiveButton("Yes", new AlertDialog.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("CHILDCOUNT", String.valueOf(myRecordingsListView.getChildCount()));
+                for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+                    View v = myRecordingsListView.getChildAt(i);
+                    CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+                    TextView filenameTextView = (TextView) v.findViewById(R.id.filename);
+                    if (checkBox.isChecked()) {
+                        String filename = (String) filenameTextView.getText();
+                        String filePath = Absolutes.DIRECTORY + "/" + filename;
+                        final File file = new File(filePath);
+                        file.delete();
+                    }
+                }
+                myRecordings.clear();
+                displayMyRecordings();
+            }
+        });
+        adb.show();
     }
 }
 

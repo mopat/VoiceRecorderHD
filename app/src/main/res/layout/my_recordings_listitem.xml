@@ -47,10 +47,11 @@
         android:textColor="#000"
         android:textSize="@dimen/alert_font_size" />
     <CheckBox
-        android:id="@+id/samplerate_checkbox"
+        android:id="@+id/listitem_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/filename" />
+        android:layout_below="@id/filename"
+        android:visibility="invisible"/>
 </RelativeLayout>

@@ -10,8 +10,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class MyRecordingsActivity extends AppCompatActivity {
     private ListView myRecordingsListView;
     private MyRecordingsArrayAdapter myRecordingsArrayAdapter;
+    private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,18 +41,16 @@ public class MyRecordingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         init();
-
         displayMyRecordings();
         initListeners();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_my_recordings, menu);
+        return true;
     }
 
     private void init() {
@@ -123,7 +127,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
         Log.d("Files", "Path: " + path);
         File f = new File(path);
         File file[] = f.listFiles();
-        ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
+
         Log.d("Files", "Size: " + file.length);
         for (int i = 0; i < file.length; i++) {
             MusicMetadataSet srcSet = null;
@@ -136,15 +140,63 @@ public class MyRecordingsActivity extends AppCompatActivity {
             IMusicMetadata metadata = srcSet.getSimplified();
             String samplerate = metadata.getComment();
             String filename = file[i].getName();
-            String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
-            String filesize = String.valueOf(file[i].length());
+            Log.d("file",(String)samplerate);
+//            String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+            //String filesize = String.valueOf(file[i].length());
             //Log.d("Files", "FileName:" + file[i].getName());
-            myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
+            //myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
         }
-        myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
+     /*   myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
         myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
         myRecordingsArrayAdapter.notifyDataSetChanged();
+*/
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_multiselect:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+
+                Log.d("CLICK", "CLICK");
+
+                for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+                    Log.d("COUNT", String.valueOf(i));
+                    View v = myRecordingsListView.getChildAt(i);
+                    CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+                    checkBox.setVisibility(View.VISIBLE);
+                    Log.d("ISCHECKED", String.valueOf(checkBox.isChecked()));
+                }
+                return true;
+            case R.id.action_delete:
+                for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
+                    Log.d("COUNT", String.valueOf(i));
+                    View v = myRecordingsListView.getChildAt(i);
+                    CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+                    TextView filenameTextView = (TextView) v.findViewById(R.id.filename);
+                    Log.d("filenameTextView", (String) filenameTextView.getText());
+                    if (checkBox.isChecked()) {
+                        String filename = (String) filenameTextView.getText();
+                        String filePath = Absolutes.DIRECTORY + "/" + filename;
+                        final File file = new File(filePath);
+                        boolean delete = file.delete();
+                        displayMyRecordings();
+                    }
+                    Log.d("ISCHECKED", String.valueOf(checkBox.isChecked()));
+                }
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }
 

@@ -5,4 +5,5 @@ package com.mopat.patrick.voicerecorderhd;
  */
 public class Config {
     public static int sampleRate = 44100;
+    public static String filetype = ".mp3";
 }

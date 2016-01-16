@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,15 +13,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
@@ -78,6 +76,35 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         res = getResources();
     }
 
+    private void showSaveDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialoglayout = inflater.inflate(R.layout.save_file_alert_dialog, null);
+        final AlertDialog.Builder sampleRateAlertDialog = new AlertDialog.Builder(this);
+        AlertDialog dia = sampleRateAlertDialog.create();
+
+        sampleRateAlertDialog.setTitle("Save File?");
+
+        sampleRateAlertDialog.setView(dialoglayout);
+        final EditText filenameEditText = (EditText) dialoglayout.findViewById(R.id.filename_edittext);
+        filenameEditText.setText(recorder.getRecordingFilename());
+        sampleRateAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                String filename = filenameEditText.getText().toString();
+                recorder.renameFile(filename);
+            }
+        });
+        sampleRateAlertDialog.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                recorder.deleteFile();
+            }
+        });
+        sampleRateAlertDialog.show();
+    }
+
     private void initListeners() {
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     samplerateSpinner.setEnabled(false);
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
+                    showSaveDialog();
                     recordButton.setText("START");
                     initRecording(recorder.getFilePath(), recorder.getSamplerate());
                     samplerateSpinner.setEnabled(true);
@@ -127,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 String selected = parent.getItemAtPosition(position).toString();
                 Config.sampleRate = Integer.valueOf(selected);
                 storeSampleRate(position);
-                if (recording != null){
+                if (recording != null) {
                     seekBar.setMax(recording.getDurationInMs());
                     durationTime.setText(formatTime(recording.getDurationInMs()));
                 }
@@ -141,12 +169,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
     //private method of your class
-    private int getSpinnerIndex(String samplerate)
-    {
+    private int getSpinnerIndex(String samplerate) {
         int index = 0;
 
-        for (int i=0;i<samplerateSpinner.getCount();i++){
-            if (samplerateSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(samplerate)){
+        for (int i = 0; i < samplerateSpinner.getCount(); i++) {
+            if (samplerateSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(samplerate)) {
                 index = i;
                 break;
             }

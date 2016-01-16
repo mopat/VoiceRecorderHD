@@ -85,7 +85,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                     }
                 });
                 adb.show();
-                
+
                 return true;
             }
         });

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.text.Editable;
 import android.util.Log;
 
 import org.cmc.music.common.ID3WriteException;
@@ -32,7 +33,7 @@ public class Recorder {
     private AudioRecord recorder = null;
     private Thread recordingThread, stopRecordingThread = null;
     private boolean isRecording = false;
-    private String recordingPath = null;
+    private String recordingPath = null, recordingFilename = null;
     long recordTime, st;
     private int written = 0;
     int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
@@ -99,7 +100,9 @@ public class Recorder {
 
     private void writeAudioDataToFile() {
         // Write the output audio in byte
-        recording = new File(Absolutes.DIRECTORY + "/" + String.valueOf(System.currentTimeMillis()) + ".mp3");
+        recordingFilename = String.valueOf(System.currentTimeMillis());
+        recording = new File(Absolutes.DIRECTORY + "/" + recordingFilename + Config.filetype);
+
         short sData[] = new short[BufferElements2Rec];
         recordingPath = recording.getAbsolutePath();
         FileOutputStream os = null;
@@ -123,6 +126,20 @@ public class Recorder {
         }
         setMetadata();
         written = 0;
+    }
+
+    public void renameFile(String filename) {
+        File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
+        File to = new File(Absolutes.DIRECTORY, filename + Config.filetype);
+        from.renameTo(to);
+    }
+
+    public void deleteFile() {
+        recording.delete();
+    }
+
+    public String getRecordingFilename() {
+        return recordingFilename;
     }
 
     public void stopRecording() {
@@ -153,7 +170,7 @@ public class Recorder {
         return recordingPath;
     }
 
-    public int getSamplerate(){
+    public int getSamplerate() {
         return samplerate;
     }
 }

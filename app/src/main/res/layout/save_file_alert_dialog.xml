@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/samplerate_alert_dialog"
+    android:id="@+id/save_file_alert_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
@@ -10,12 +10,11 @@
     android:paddingRight="@dimen/alert_padding_right"
     android:paddingStart="@dimen/alert_padding_left">
 
-    <ListView
-        android:id="@+id/samplerate_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:choiceMode="singleChoice"
-        ></ListView>
+<EditText android:id="@+id/filename_edittext"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="FILENAME"
+    android:inputType="text"/>
 
 
 </FrameLayout>

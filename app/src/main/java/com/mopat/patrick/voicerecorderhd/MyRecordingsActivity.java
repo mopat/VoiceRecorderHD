@@ -36,7 +36,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private MyRecordingsArrayAdapter myRecordingsArrayAdapter;
     private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
     private Menu menu;
-    private boolean allSelected = false;
+    private boolean allSelected = false, selectionMode = false;
     private ShareActionProvider mShareActionProvider;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +168,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
             case R.id.action_multiselect:
                 hideDefaultActionBarIcons();
                 showCheckBoxes();
+                selectionMode = true;
                 return true;
             case R.id.action_delete:
                 deleteFiles();
@@ -259,7 +260,19 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 checkBox.setChecked(false);
         }
     }
+    @Override
+    public void onBackPressed() {
+       // moveTaskToBack(true);
+        if(selectionMode == true){
+            showDefaultActionBarIcons();
+            allSelected = false;
+            selectUnselectAll();
+            hideCheckBoxes();
+            selectionMode = false;
+        }
+        else super.onBackPressed();
 
+    }
     private void hideCheckBoxes() {
         for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
             View v = myRecordingsListView.getChildAt(i);

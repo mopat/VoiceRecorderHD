@@ -152,6 +152,10 @@ public class Recording {
         return invertedBytes;
     }
 
+    public String getFilepPath(){
+        return filepPath;
+    }
+
     public int getFileSize() {
         return fileLength;
     }

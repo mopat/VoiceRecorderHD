@@ -1,5 +1,6 @@
 package com.mopat.patrick.voicerecorderhd;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +49,9 @@ public class MyRecordingsActivity extends AppCompatActivity {
         init();
         displayMyRecordings();
         initListeners();
+        android.support.v7.app.ActionBar ab = getSupportActionBar();
+        ab.setDisplayShowTitleEnabled(false);
+        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -183,7 +187,9 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 selectUnselectAll();
                 hideCheckBoxes();
                 return true;*/
-
+            case android.R.id.home:
+                backFunction();
+                return true;
             case R.id.action_share:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 sharingIntent.setType("audio/*");
@@ -263,6 +269,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
        // moveTaskToBack(true);
+    backFunction();
+
+    }
+
+    private void backFunction(){
         if(selectionMode == true){
             showDefaultActionBarIcons();
             allSelected = false;
@@ -271,7 +282,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             selectionMode = false;
         }
         else super.onBackPressed();
-
     }
     private void hideCheckBoxes() {
         for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {

@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recorder = new Recorder(getApplicationContext());
 
         res = getResources();
+
+        playbackTime.setText(formatTime(0.0));
+        durationTime.setText(formatTime(0.0));
     }
 
     private void showSaveDialog() {
@@ -121,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     recorder.startRecording();
                     recordButton.setBackgroundResource(R.drawable.ic_stop_white_48dp);
                     samplerateSpinner.setEnabled(false);
+                    resetViews();
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();
@@ -237,7 +241,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void resetViews(){
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
-        filenameTextView.setText("None");
     }
 
     private int getSpinnerIndex(String samplerate) {

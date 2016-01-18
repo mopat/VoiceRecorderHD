@@ -19,6 +19,13 @@
         android:background="@drawable/ic_queue_music_white_48dp"
         android:text="MyRecording" />
 
+    <TextView
+        android:id="@+id/filename_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ffffff" />
+
     <ImageButton
         android:id="@+id/record_button"
         android:layout_width="200dp"
@@ -55,13 +62,6 @@
         android:clickable="false"
         android:enabled="false" />
 
-
-    <ImageButton
-        android:id="@+id/delete_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete" />
-
     <Spinner
         android:id="@+id/samplerate_spinner"
         android:layout_width="match_parent"
@@ -69,18 +69,27 @@
         android:entries="@array/samplerate_array"
         android:prompt="@string/samplerate_prompt" />
 
-    <TextView
-        android:id="@+id/playback_time"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/duration_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/playback_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="00:00:00"
+            android:textColor="#ffffff" />
 
-    <TextView
-        android:id="@+id/filename_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/duration_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="00:00:00"
+            android:textColor="#ffffff" />
+    </RelativeLayout>
+
 </LinearLayout>

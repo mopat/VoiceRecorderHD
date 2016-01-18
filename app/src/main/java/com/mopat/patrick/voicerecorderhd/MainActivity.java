@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button playButton, stopButton, myRecordingsButton, deleteButton;
-    private ImageButton recordButton;
+    private Button stopButton, myRecordingsButton, deleteButton;
+    private ImageButton recordButton, playButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
     private void init() {
         recordButton = (ImageButton) findViewById(R.id.record_button);
-        playButton = (Button) findViewById(R.id.play_button);
+        playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
         myRecordingsButton = (Button) findViewById(R.id.my_recordings_button);
@@ -135,10 +135,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onClick(View v) {
                 if (recording != null) {
-                    if (playButton.getText().equals("Play")) {
+                    if (recording.getState() == 2 || recording.getState() == 0) {
                         recording.play(seekBar.getProgress() * 2);
-                    } else {
+                        playButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_white_48dp);
+                    } else  if (recording.getState() == 1){
                         recording.pause();
+                        playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
                     }
                 }
             }
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onClick(View v) {
                 recording.stop();
-                playButton.setText("Play");
+                playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
             }
         });
         myRecordingsButton.setOnClickListener(new View.OnClickListener() {
@@ -336,8 +338,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!playButton.getText().equals("Play"))
-                    playButton.setText("Play");
+                if (recording.getState() != 0)
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
             }
         });
         recording.stop();
@@ -350,8 +352,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!playButton.getText().equals("Play"))
-                    playButton.setText("Play");
+                if (recording.getState() == 2)
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
             }
         });
     }
@@ -361,8 +363,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!playButton.getText().equals("Pause"))
-                    playButton.setText("Pause");
+                if (recording.getState() == 2)
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
             }
         });
     }
@@ -372,8 +374,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!playButton.getText().equals("Play"))
-                    playButton.setText("Play");
+                if (recording.getState() == 0)
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
             }
         });
     }

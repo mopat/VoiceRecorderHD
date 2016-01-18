@@ -143,6 +143,10 @@ public class Recording {
         }).start();
     }
 
+    public void delete(){
+        file.delete();
+    }
+
     private byte[] invert(byte[] bytes) {
     byte[] invertedBytes = new byte[bytes.length];
 

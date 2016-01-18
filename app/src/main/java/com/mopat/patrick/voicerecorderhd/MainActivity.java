@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button recordButton, playButton, stopButton, myRecordingsButton;
+    private Button recordButton, playButton, stopButton, myRecordingsButton, deleteButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -72,10 +72,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
         myRecordingsButton = (Button) findViewById(R.id.my_recordings_button);
+        deleteButton = (Button) findViewById(R.id.delete_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
-        filenameTextView = (TextView)findViewById(R.id.filename_text_view);
+        filenameTextView = (TextView) findViewById(R.id.filename_text_view);
         recorder = new Recorder(getApplicationContext());
 
         res = getResources();
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 dialog.dismiss();
                 String filename = filenameEditText.getText().toString();
                 recorder.renameFile(filename);
+                initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
                 Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
             }
         });
@@ -122,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     recorder.stopRecording();
                     showSaveDialog();
                     recordButton.setText("START");
-                    initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
                     samplerateSpinner.setEnabled(true);
                 }
             }
@@ -154,6 +155,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 startActivity(i);
             }
         });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              showDeleteDialog();
+            }
+        });
         samplerateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -173,7 +180,21 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
-    //private method of your class
+    private void showDeleteDialog(){
+        AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+        adb.setTitle("Delete?");
+        adb.setMessage("Are you sure you want to delete " + filenameTextView.getText());
+        adb.setNegativeButton("Cancel", null);
+        adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                recording.delete();
+                Toast.makeText(getApplicationContext(), "File deleted", Toast.LENGTH_LONG).show();
+                recording = null;
+                resetViews();
+            }
+        });
+        adb.show();
+    }
     private int getSpinnerIndex(String samplerate) {
         int index = 0;
 
@@ -224,6 +245,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         int position = prefs.getInt(res.getString(R.string.samplerate_key), Context.MODE_PRIVATE); //2
         samplerateSpinner.setSelection(position);
         Config.sampleRate = Integer.parseInt((String) samplerateSpinner.getSelectedItem());
+    }
+
+    private void resetViews(){
+        playbackTime.setText(formatTime(0.0));
+        durationTime.setText(formatTime(0.0));
+        filenameTextView.setText("None");
     }
 
     private void initSeekBar() {

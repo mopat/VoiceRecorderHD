@@ -162,7 +162,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String newfilename = filenameEditText.getText().toString();
                 renameFile(filename, newfilename);
-                Toast.makeText(getApplicationContext(), "File renamed", Toast.LENGTH_LONG).show();
                 myRecordings.clear();
                 displayMyRecordings();
             }
@@ -173,7 +172,10 @@ public class MyRecordingsActivity extends AppCompatActivity {
     public void renameFile(String filename, String newFilename) {
         File from = new File(Absolutes.DIRECTORY, filename);
         File to = new File(Absolutes.DIRECTORY, newFilename);
-        Log.d("RENAME", String.valueOf(from.renameTo(to)));
+        if(from.renameTo(to))
+            Toast.makeText(getApplicationContext(), "File renamed", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(getApplicationContext(), "File renaming not possible", Toast.LENGTH_LONG).show();
     }
 
     private String getSampleRate(String filepath) {

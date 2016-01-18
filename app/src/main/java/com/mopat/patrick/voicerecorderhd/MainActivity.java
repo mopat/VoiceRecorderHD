@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,12 +32,11 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button stopButton, deleteButton;
-    private ImageButton recordButton, playButton, myRecordingsButton;
+    private ImageButton recordButton, playButton, myRecordingsButton, stopButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
-    private TextView playbackTime, durationTime, filenameTextView;
+    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView;
     private Spinner samplerateSpinner;
     private Resources res;
 
@@ -72,18 +72,22 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recordButton = (ImageButton) findViewById(R.id.record_button);
         playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
-        stopButton = (Button) findViewById(R.id.stop_button);
+        stopButton = (ImageButton) findViewById(R.id.stop_button);
         myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
+        recordDurationTextView = (TextView)findViewById(R.id.record_duration_textview);
         recorder = new Recorder(getApplicationContext());
 
         res = getResources();
 
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
+ /*       String[] ar = res.getStringArray(R.array.samplerate_array);
+        ArrayAdapter<String> adapter = new ArrayAdapter(getApplicationContext(), R.layout.my_simple_list_item, ar);
+        samplerateSpinner.setAdapter(adapter);*/
     }
 
     private void showSaveDialog() {
@@ -122,13 +126,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 if (!recorder.isRecording()) {
                     recorder.startRecording();
-                    recordButton.setBackgroundResource(R.drawable.ic_stop_white_48dp);
+                    recordButton.setBackgroundResource(R.drawable.ic_stop_black_48dp);
                     samplerateSpinner.setEnabled(false);
                     resetViews();
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();
-                    recordButton.setBackgroundResource(R.drawable.ic_mic_white_48dp);
+                    recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
                     samplerateSpinner.setEnabled(true);
                 }
             }
@@ -140,10 +144,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 if (recording != null) {
                     if (recording.getState() == 2 || recording.getState() == 0) {
                         recording.play(seekBar.getProgress() * 2);
-                        playButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_white_48dp);
+                        playButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
                     } else if (recording.getState() == 1) {
                         recording.pause();
-                        playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
+                        playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
                     }
                 }
             }
@@ -152,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onClick(View v) {
                 recording.stop();
-                playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
+                playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
             }
         });
         myRecordingsButton.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
-    private void showDeleteDialog(){
+    private void showDeleteDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
         adb.setTitle("Delete?");
         adb.setMessage("Are you sure you want to delete " + filenameTextView.getText());
@@ -238,9 +242,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         Config.sampleRate = Integer.parseInt((String) samplerateSpinner.getSelectedItem());
     }
 
-    private void resetViews(){
+    private void resetViews() {
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
+        filenameTextView.setText("");
     }
 
     private int getSpinnerIndex(String samplerate) {
@@ -339,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void run() {
                 if (recording.getState() != 0)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
             }
         });
         recording.stop();
@@ -353,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void run() {
                 if (recording.getState() == 2)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
             }
         });
     }
@@ -364,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void run() {
                 if (recording.getState() == 2)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
             }
         });
     }
@@ -375,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void run() {
                 if (recording.getState() == 0)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
             }
         });
     }

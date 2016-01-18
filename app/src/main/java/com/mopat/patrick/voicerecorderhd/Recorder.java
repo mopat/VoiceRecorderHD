@@ -127,6 +127,9 @@ public class Recorder {
         written = 0;
     }
 
+    public int getWritten(){
+        return written;
+    }
     public void renameFile(String filename) {
         File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
         File to = new File(Absolutes.DIRECTORY, filename + Config.filetype);

@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button stopButton, myRecordingsButton, deleteButton;
-    private ImageButton recordButton, playButton;
+    private Button stopButton, deleteButton;
+    private ImageButton recordButton, playButton, myRecordingsButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
-        myRecordingsButton = (Button) findViewById(R.id.my_recordings_button);
-        deleteButton = (Button) findViewById(R.id.delete_button);
+        myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
@@ -138,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     if (recording.getState() == 2 || recording.getState() == 0) {
                         recording.play(seekBar.getProgress() * 2);
                         playButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_white_48dp);
-                    } else  if (recording.getState() == 1){
+                    } else if (recording.getState() == 1) {
                         recording.pause();
                         playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_white_48dp);
                     }
@@ -159,12 +158,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 startActivity(i);
             }
         });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeleteDialog();
-            }
-        });
+
         samplerateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -286,6 +280,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
+                return true;
+            case R.id.action_delete_main:
+                showDeleteDialog();
                 return true;
             case R.id.action_share_main:
                 if (recording != null) {

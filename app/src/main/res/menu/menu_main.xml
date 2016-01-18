@@ -8,6 +8,11 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_delete_main"
+        android:icon="@drawable/ic_delete_white_48dp"
+        android:title="yoo"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_share_main"
         android:icon="@drawable/ic_share_white_48dp"
         android:title="yoo"

@@ -76,6 +76,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 String filePath = Absolutes.DIRECTORY + "/" + filename;
                 Log.d("FILENAME", Absolutes.DIRECTORY + "/" + filename);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
+                i.putExtra("filename", filename);
                 i.putExtra("filepath", filePath);
                 i.putExtra("samplerate", getSampleRate(filePath));
                 startActivity(i);

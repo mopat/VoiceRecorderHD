@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
-    private TextView playbackTime, durationTime;
+    private TextView playbackTime, durationTime, filenameTextView;
     private Spinner samplerateSpinner;
     private Resources res;
 
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
+        filenameTextView = (TextView)findViewById(R.id.filename_text_view);
         recorder = new Recorder(getApplicationContext());
 
         res = getResources();
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     recorder.stopRecording();
                     showSaveDialog();
                     recordButton.setText("START");
-                    initRecording(recorder.getFilePath(), recorder.getSamplerate());
+                    initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
                     samplerateSpinner.setEnabled(true);
                 }
             }
@@ -185,8 +186,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         return index;
     }
 
-    private void initRecording(String filePath, int samplerate) {
+    private void initRecording(String filePath, String filename, int samplerate) {
         recording = new Recording(filePath, samplerate, MainActivity.this);
+        filenameTextView.setText(filename);
         durationTime.setText(formatTime(recording.getDurationInMs()));
         seekBar.setMax(recording.getDurationInMs());
 
@@ -200,9 +202,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void checkIntent() {
         if (getIntent().hasExtra("filepath")) {
             String filePath = getIntent().getStringExtra("filepath");
+            String filename = getIntent().getStringExtra("filename");
             String samplerate = getIntent().getStringExtra("samplerate");
             Log.d("FILEPATH", String.valueOf(getSpinnerIndex(samplerate)));
-            initRecording(filePath, Integer.parseInt(samplerate));
+            initRecording(filePath, filename, Integer.parseInt(samplerate));
             seekBar.setMax(recording.getDurationInMs());
             samplerateSpinner.setSelection(getSpinnerIndex(samplerate));
         }

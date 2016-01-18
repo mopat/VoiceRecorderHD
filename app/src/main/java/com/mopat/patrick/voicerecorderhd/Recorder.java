@@ -100,13 +100,12 @@ public class Recorder {
 
     private void writeAudioDataToFile() {
         // Write the output audio in byte
-        recordingFilename = String.valueOf(System.currentTimeMillis());
-        recording = new File(Absolutes.DIRECTORY + "/" + recordingFilename + Config.filetype);
+        recordingFilename = String.valueOf(System.currentTimeMillis() + Config.filetype);
+        recording = new File(Absolutes.DIRECTORY + "/" + recordingFilename);
 
         short sData[] = new short[BufferElements2Rec];
         recordingPath = recording.getAbsolutePath();
         FileOutputStream os = null;
-        ;
         try {
             os = new FileOutputStream(recordingPath);
         } catch (FileNotFoundException e) {

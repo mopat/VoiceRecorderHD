@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.cmc.music.metadata.IMusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
@@ -94,7 +95,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
                 final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                         MyRecordingsActivity.this,
-                        android.R.layout.simple_list_item_1);
+                        R.layout.my_simple_list_item);
                 arrayAdapter.add("Delete");
                 arrayAdapter.add("Share...");
 
@@ -143,6 +144,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
         adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 file.delete();
+                Toast.makeText(getApplicationContext(), "File deleted", Toast.LENGTH_LONG).show();
                 myRecordings.clear();
                 displayMyRecordings();
             }

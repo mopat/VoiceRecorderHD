@@ -79,9 +79,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 String filePath = Absolutes.DIRECTORY + "/" + filename;
                 Log.d("FILENAME", Absolutes.DIRECTORY + "/" + filename);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
-                i.putExtra("filename", filename);
-                i.putExtra("filepath", filePath);
-                i.putExtra("samplerate", getSampleRate(filePath));
+                i.putExtra("filename", filename).putExtra("filepath", filePath).putExtra("samplerate", getSampleRate(filePath));
                 startActivity(i);
             }
         });
@@ -98,7 +96,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                         R.layout.my_simple_list_item);
                 arrayAdapter.add("Delete");
                 arrayAdapter.add("Share...");
-
+                arrayAdapter.add("Rename...");
                 builderSingle.setNegativeButton(
                         "cancel",
                         new DialogInterface.OnClickListener() {
@@ -115,13 +113,15 @@ public class MyRecordingsActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 String strName = arrayAdapter.getItem(which);
                                 if (strName.equals("Delete")) {
-                                    showDeleteDialog(view);
+                                    showDeleteDialog(filename);
                                 } else if (strName.equals("Share...")) {
                                     Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                                     sharingIntent.setType("audio/*");
                                     Uri uri = Uri.parse(Absolutes.DIRECTORY + "/" + filename);
                                     sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
                                     startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                                } else if (strName.equals("Rename...")) {
+                                    showRenameDialog(filename);
                                 }
                             }
                         });
@@ -132,14 +132,12 @@ public class MyRecordingsActivity extends AppCompatActivity {
         });
     }
 
-    private void showDeleteDialog(View view) {
-        TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
-        String filename = (String) filenameTextView.getText();
+    private void showDeleteDialog(String filename) {
         String filePath = Absolutes.DIRECTORY + "/" + filename;
         final File file = new File(filePath);
         AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
         adb.setTitle("Delete?");
-        adb.setMessage("Are you sure you want to delete " + filenameTextView.getText());
+        adb.setMessage("Are you sure you want to delete " + filename);
         adb.setNegativeButton("Cancel", null);
         adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -150,6 +148,32 @@ public class MyRecordingsActivity extends AppCompatActivity {
             }
         });
         adb.show();
+    }
+
+    private void showRenameDialog(final String filename) {
+        AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
+        adb.setTitle("Delete?");
+        final EditText filenameEditText = new EditText(MyRecordingsActivity.this);
+        filenameEditText.setHint("Filename");
+        adb.setView(filenameEditText);
+        filenameEditText.setText(filename);
+        adb.setNegativeButton("Cancel", null);
+        adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String newfilename = filenameEditText.getText().toString();
+                renameFile(filename, newfilename);
+                Toast.makeText(getApplicationContext(), "File renamed", Toast.LENGTH_LONG).show();
+                myRecordings.clear();
+                displayMyRecordings();
+            }
+        });
+        adb.show();
+    }
+
+    public void renameFile(String filename, String newFilename) {
+        File from = new File(Absolutes.DIRECTORY, filename);
+        File to = new File(Absolutes.DIRECTORY, newFilename);
+        Log.d("RENAME", String.valueOf(from.renameTo(to)));
     }
 
     private String getSampleRate(String filepath) {

@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -39,6 +40,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private Menu menu;
     private boolean allSelected = false, selectionMode = false;
     private ShareActionProvider mShareActionProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,26 +87,67 @@ public class MyRecordingsActivity extends AppCompatActivity {
         myRecordingsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
-                TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
-                String filename = (String) filenameTextView.getText();
-                String filePath = Absolutes.DIRECTORY + "/" + filename;
-                final File file = new File(filePath);
-                AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
-                adb.setTitle("Delete?");
-                adb.setMessage("Are you sure you want to delete " + filenameTextView.getText());
-                adb.setNegativeButton("Cancel", null);
-                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        boolean delete = file.delete();
-                        myRecordings.clear();
-                        displayMyRecordings();
-                    }
-                });
-                adb.show();
+                TextView listitem = (TextView) view.findViewById(R.id.filename);
+                final String filename = (String) listitem.getText();
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(MyRecordingsActivity.this);
+                builderSingle.setTitle("Actions");
+
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                        MyRecordingsActivity.this,
+                        android.R.layout.simple_list_item_1);
+                arrayAdapter.add("Delete");
+                arrayAdapter.add("Share...");
+
+                builderSingle.setNegativeButton(
+                        "cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                builderSingle.setAdapter(
+                        arrayAdapter,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String strName = arrayAdapter.getItem(which);
+                                if (strName.equals("Delete")) {
+                                    showDeleteDialog(view);
+                                } else if (strName.equals("Share...")) {
+                                    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                                    sharingIntent.setType("audio/*");
+                                    Uri uri = Uri.parse(Absolutes.DIRECTORY + "/" + filename);
+                                    sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                                    startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                                }
+                            }
+                        });
+                builderSingle.show();
 
                 return true;
             }
         });
+    }
+
+    private void showDeleteDialog(View view) {
+        TextView filenameTextView = (TextView) view.findViewById(R.id.filename);
+        String filename = (String) filenameTextView.getText();
+        String filePath = Absolutes.DIRECTORY + "/" + filename;
+        final File file = new File(filePath);
+        AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
+        adb.setTitle("Delete?");
+        adb.setMessage("Are you sure you want to delete " + filenameTextView.getText());
+        adb.setNegativeButton("Cancel", null);
+        adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                file.delete();
+                myRecordings.clear();
+                displayMyRecordings();
+            }
+        });
+        adb.show();
     }
 
     private String getSampleRate(String filepath) {
@@ -152,7 +195,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             IMusicMetadata metadata = srcSet.getSimplified();
             String samplerate = metadata.getComment();
             String filename = file[i].getName();
-            Log.d("file", (String) samplerate);
             String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
             String filesize = String.valueOf(file[i].length());
             Log.d("Files", "FileName:" + file[i].getName());
@@ -195,7 +237,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 sharingIntent.setType("audio/*");
                 sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, getSelectedItems());
-               // sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Uri.fromFile(new File(Absolutes.DIRECTORY +"/1.mp3")));
+                // sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Uri.fromFile(new File(Absolutes.DIRECTORY +"/1.mp3")));
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
             default:
@@ -206,7 +248,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Uri> getSelectedItems(){
+    private ArrayList<Uri> getSelectedItems() {
         ArrayList<Uri> fileUris = new ArrayList<>();
         for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
             View v = myRecordingsListView.getChildAt(i);
@@ -267,23 +309,24 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 checkBox.setChecked(false);
         }
     }
+
     @Override
     public void onBackPressed() {
-       // moveTaskToBack(true);
-    backFunction();
+        // moveTaskToBack(true);
+        backFunction();
 
     }
 
-    private void backFunction(){
-        if(selectionMode == true){
+    private void backFunction() {
+        if (selectionMode == true) {
             showDefaultActionBarIcons();
             allSelected = false;
             selectUnselectAll();
             hideCheckBoxes();
             selectionMode = false;
-        }
-        else super.onBackPressed();
+        } else super.onBackPressed();
     }
+
     private void hideCheckBoxes() {
         for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
             View v = myRecordingsListView.getChildAt(i);

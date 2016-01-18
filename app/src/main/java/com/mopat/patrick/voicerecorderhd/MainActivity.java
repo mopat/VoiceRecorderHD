@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              showDeleteDialog();
+                showDeleteDialog();
             }
         });
         samplerateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -194,17 +194,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             }
         });
         adb.show();
-    }
-    private int getSpinnerIndex(String samplerate) {
-        int index = 0;
-
-        for (int i = 0; i < samplerateSpinner.getCount(); i++) {
-            if (samplerateSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(samplerate)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
     }
 
     private void initRecording(String filePath, String filename, int samplerate) {
@@ -251,6 +240,18 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
         filenameTextView.setText("None");
+    }
+
+    private int getSpinnerIndex(String samplerate) {
+        int index = 0;
+
+        for (int i = 0; i < samplerateSpinner.getCount(); i++) {
+            if (samplerateSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(samplerate)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     private void initSeekBar() {

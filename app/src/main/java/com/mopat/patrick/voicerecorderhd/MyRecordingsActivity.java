@@ -265,7 +265,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 sharingIntent.setType("audio/*");
                 sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, getSelectedItems());
-                // sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, Uri.fromFile(new File(Absolutes.DIRECTORY +"/1.mp3")));
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
             default:

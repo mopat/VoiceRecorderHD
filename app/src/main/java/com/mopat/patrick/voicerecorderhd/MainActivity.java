@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,7 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
 
-    private Button recordButton, playButton, stopButton, myRecordingsButton, deleteButton;
+    private Button playButton, stopButton, myRecordingsButton, deleteButton;
+    private ImageButton recordButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
 
     private void init() {
-        recordButton = (Button) findViewById(R.id.record_button);
+        recordButton = (ImageButton) findViewById(R.id.record_button);
         playButton = (Button) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (Button) findViewById(R.id.stop_button);
@@ -118,12 +120,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 if (!recorder.isRecording()) {
                     recorder.startRecording();
-                    recordButton.setText("STOP");
+                    recordButton.setBackgroundResource(R.drawable.ic_stop_white_48dp);
                     samplerateSpinner.setEnabled(false);
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();
-                    recordButton.setText("START");
+                    recordButton.setBackgroundResource(R.drawable.ic_mic_white_48dp);
                     samplerateSpinner.setEnabled(true);
                 }
             }

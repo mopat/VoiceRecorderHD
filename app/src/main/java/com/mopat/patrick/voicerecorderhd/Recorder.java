@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -35,9 +37,9 @@ public class Recorder {
     private boolean isRecording = false;
     private String recordingPath = null, recordingFilename = null;
     long recordTime, st;
-    private int written = 0;
     int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
             RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+    private List<RecordingListener> recordingListenerList = new ArrayList<>();
 
     private int samplerate;
     int BufferElements2Rec = 512 / 2; // want to play 2048 (2K) since 2 bytes we use only 1024
@@ -101,10 +103,9 @@ public class Recorder {
     private void writeAudioDataToFile() {
         // Write the output audio in byte
         int numOfFilesInDirectory = Absolutes.DIRECTORY.list().length;
-        recordingFilename = Absolutes.RECORDING_DEF_NAME + String.valueOf(Absolutes.DIRECTORY.list().length + Config.filetype);
-        Log.d("NUMBEROFFILES", String.valueOf(Absolutes.DIRECTORY.list().length));
+        recordingFilename = Absolutes.RECORDING_DEF_NAME + String.valueOf(numOfFilesInDirectory + Config.filetype);
         recording = new File(Absolutes.DIRECTORY + "/" + recordingFilename);
-
+        int written = 0;
         short sData[] = new short[BufferElements2Rec];
         recordingPath = recording.getAbsolutePath();
         FileOutputStream os = null;
@@ -121,17 +122,14 @@ public class Recorder {
 
                 os.write(bData, 0, BufferElements2Rec * BytesPerElement);
                 written += bData.length;
+                triggerWrittenBytes(written);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         setMetadata();
-        written = 0;
     }
 
-    public int getWritten(){
-        return written;
-    }
     public void renameFile(String filename) {
         recordingFilename = filename;
         File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
@@ -177,5 +175,15 @@ public class Recorder {
 
     public int getSamplerate() {
         return samplerate;
+    }
+
+    public void addRecordingListener(RecordingListener recordingListener) {
+        recordingListenerList.add(recordingListener);
+    }
+
+    private void triggerWrittenBytes(final int written) {
+        for (RecordingListener listener : recordingListenerList) {
+            listener.recordedBytes(written);
+        }
     }
 }

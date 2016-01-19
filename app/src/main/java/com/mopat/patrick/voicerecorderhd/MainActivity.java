@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener {
+public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
 
     private ImageButton recordButton, playButton, myRecordingsButton, stopButton;
     private Recorder recorder;
@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
-        recordDurationTextView = (TextView)findViewById(R.id.record_duration_textview);
+        recordDurationTextView = (TextView) findViewById(R.id.record_duration_textview);
         recorder = new Recorder(getApplicationContext());
-
+        recorder.addRecordingListener(MainActivity.this);
         res = getResources();
 
         playbackTime.setText(formatTime(0.0));
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 recorder.deleteFile();
+                resetViews();
                 Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
             }
         });
@@ -245,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void resetViews() {
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
+        recordDurationTextView.setText(formatTime(0.0));
         filenameTextView.setText("");
     }
 
@@ -381,6 +383,18 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void run() {
                 if (recording.getState() == 0)
                     playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+            }
+        });
+    }
+
+    @Override
+    public void recordedBytes(final int recordedBytes) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                double currentTime = byteToInt(recordedBytes);
+                String currentTimeString = formatTime(currentTime);
+                recordDurationTextView.setText(currentTimeString);
             }
         });
     }

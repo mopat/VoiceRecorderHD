@@ -100,7 +100,9 @@ public class Recorder {
 
     private void writeAudioDataToFile() {
         // Write the output audio in byte
-        recordingFilename = String.valueOf(System.currentTimeMillis() + Config.filetype);
+        int numOfFilesInDirectory = Absolutes.DIRECTORY.list().length;
+        recordingFilename = Absolutes.RECORDING_DEF_NAME + String.valueOf(Absolutes.DIRECTORY.list().length + Config.filetype);
+        Log.d("NUMBEROFFILES", String.valueOf(Absolutes.DIRECTORY.list().length));
         recording = new File(Absolutes.DIRECTORY + "/" + recordingFilename);
 
         short sData[] = new short[BufferElements2Rec];
@@ -131,8 +133,9 @@ public class Recorder {
         return written;
     }
     public void renameFile(String filename) {
+        recordingFilename = filename;
         File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
-        File to = new File(Absolutes.DIRECTORY, filename + Config.filetype);
+        File to = new File(Absolutes.DIRECTORY, recordingFilename);
         from.renameTo(to);
     }
 

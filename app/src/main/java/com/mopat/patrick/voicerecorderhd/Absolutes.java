@@ -9,4 +9,5 @@ import java.io.File;
  */
 public class Absolutes {
     public static final File DIRECTORY =  new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ClearVoiceRecorder");
+    public static final String RECORDING_DEF_NAME = "recording_";
 }

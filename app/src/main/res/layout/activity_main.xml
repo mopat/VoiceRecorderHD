@@ -57,8 +57,8 @@
 
     <ImageButton
         android:id="@+id/record_button"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/ic_mic_black_48dp" />
 
@@ -69,7 +69,10 @@
         android:gravity="center"
         android:text="00:00:00"
         android:textSize="20sp" />
-
+    <com.mopat.patrick.voicerecorderhd.VisualizerView
+        android:id="@+id/myvisualizerview"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
     <LinearLayout
         android:layout_width="150dp"
         android:layout_height="100dp"

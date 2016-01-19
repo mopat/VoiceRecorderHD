@@ -4,10 +4,12 @@ package com.mopat.patrick.voicerecorderhd;
  * Created by Patrick on 10.01.2016.
  */
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.text.Editable;
 import android.util.Log;
 
@@ -122,7 +124,7 @@ public class Recorder {
 
                 os.write(bData, 0, BufferElements2Rec * BytesPerElement);
                 written += bData.length;
-                triggerWrittenBytes(written);
+                triggerWrittenBytes(written, bData);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -172,6 +174,10 @@ public class Recorder {
     public String getFilePath() {
         return recordingPath;
     }
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public int getAudioSessionId(){
+        return recorder.getAudioSessionId();
+    }
 
     public int getSamplerate() {
         return samplerate;
@@ -181,9 +187,9 @@ public class Recorder {
         recordingListenerList.add(recordingListener);
     }
 
-    private void triggerWrittenBytes(final int written) {
+    private void triggerWrittenBytes(final int written, final byte[] bytes) {
         for (RecordingListener listener : recordingListenerList) {
-            listener.recordedBytes(written);
+            listener.recordedBytes(written, bytes);
         }
     }
 }

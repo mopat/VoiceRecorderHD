@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView;
     private Spinner samplerateSpinner;
     private Resources res;
+    private VisualizerView mVisualizerView;
+    private Visualizer mVisualizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +88,19 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
+
+        setupVisualizerFxAndUI();
+
  /*       String[] ar = res.getStringArray(R.array.samplerate_array);
         ArrayAdapter<String> adapter = new ArrayAdapter(getApplicationContext(), R.layout.my_simple_list_item, ar);
         samplerateSpinner.setAdapter(adapter);*/
+    }
+
+    private void setupVisualizerFxAndUI() {
+
+        // Create the Visualizer object and attach it to our media player.
+        mVisualizer = new Visualizer(0);
+        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
     }
 
     private void showSaveDialog() {
@@ -127,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 if (!recorder.isRecording()) {
                     recorder.startRecording();
+                    mVisualizerView = (VisualizerView) findViewById(R.id.myvisualizerview);
+                    setupVisualizerFxAndUI();
+                    mVisualizer.setEnabled(true);
                     recordButton.setBackgroundResource(R.drawable.ic_stop_black_48dp);
                     samplerateSpinner.setEnabled(false);
                     resetViews();
@@ -388,10 +404,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
     @Override
-    public void recordedBytes(final int recordedBytes) {
+    public void recordedBytes(final int recordedBytes, final byte[] bytes) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mVisualizerView.updateVisualizer(bytes);
                 double currentTime = byteToInt(recordedBytes);
                 String currentTimeString = formatTime(currentTime);
                 recordDurationTextView.setText(currentTimeString);

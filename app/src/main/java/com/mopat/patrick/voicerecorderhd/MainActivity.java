@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
         recordDurationTextView = (TextView) findViewById(R.id.record_duration_textview);
+        mVisualizerView = (VisualizerView) findViewById(R.id.myvisualizerview);
         recorder = new Recorder(getApplicationContext());
         recorder.addRecordingListener(MainActivity.this);
         res = getResources();
@@ -140,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 if (!recorder.isRecording()) {
                     recorder.startRecording();
-                    mVisualizerView = (VisualizerView) findViewById(R.id.myvisualizerview);
                     setupVisualizerFxAndUI();
                     mVisualizer.setEnabled(true);
                     recordButton.setBackgroundResource(R.drawable.ic_stop_black_48dp);
@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();
+                    mVisualizer.setEnabled(false);
                     recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
                     samplerateSpinner.setEnabled(true);
                 }

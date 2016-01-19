@@ -121,9 +121,10 @@ public class Recorder {
             recorder.read(sData, 0, BufferElements2Rec);
             try {
                 byte bData[] = short2byte(sData);
-
+//concat(bData);
                 os.write(bData, 0, BufferElements2Rec * BytesPerElement);
                 written += bData.length;
+
                 triggerWrittenBytes(written, bData);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -132,6 +133,16 @@ public class Recorder {
         setMetadata();
     }
 
+    byte[] allBytes = new byte[0];
+    public void concat( byte[] b) {
+        int aLen = allBytes.length;
+        int bLen = b.length;
+        byte[] c= new byte[aLen+bLen];
+        System.arraycopy(allBytes, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        allBytes = c;
+        Log.d("LENGTH", String.valueOf(allBytes.length));
+    }
     public void renameFile(String filename) {
         recordingFilename = filename;
         File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);

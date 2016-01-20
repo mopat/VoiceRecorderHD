@@ -42,6 +42,7 @@ public class Recorder {
     int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
             RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
     private List<RecordingListener> recordingListenerList = new ArrayList<>();
+    private int state = 0;
 
     private int samplerate;
     int BufferElements2Rec = 512 / 2; // want to play 2048 (2K) since 2 bytes we use only 1024
@@ -116,33 +117,39 @@ public class Recorder {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
+        state = 1;
         while (isRecording) {
-            recorder.read(sData, 0, BufferElements2Rec);
-            try {
-                byte bData[] = short2byte(sData);
-//concat(bData);
-                os.write(bData, 0, BufferElements2Rec * BytesPerElement);
-                written += bData.length;
+            Log.d("CONTINUE", "CONTINUE");
+            if (state == 1) {
 
-                triggerWrittenBytes(written, bData);
-            } catch (IOException e) {
-                e.printStackTrace();
+                recorder.read(sData, 0, BufferElements2Rec);
+                try {
+                    byte bData[] = short2byte(sData);
+//concat(bData);
+                    os.write(bData, 0, BufferElements2Rec * BytesPerElement);
+                    written += bData.length;
+
+                    triggerWrittenBytes(written, bData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         setMetadata();
     }
 
     byte[] allBytes = new byte[0];
-    public void concat( byte[] b) {
+
+    public void concat(byte[] b) {
         int aLen = allBytes.length;
         int bLen = b.length;
-        byte[] c= new byte[aLen+bLen];
+        byte[] c = new byte[aLen + bLen];
         System.arraycopy(allBytes, 0, c, 0, aLen);
         System.arraycopy(b, 0, c, aLen, bLen);
         allBytes = c;
         Log.d("LENGTH", String.valueOf(allBytes.length));
     }
+
     public void renameFile(String filename) {
         recordingFilename = filename;
         File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
@@ -152,6 +159,14 @@ public class Recorder {
 
     public void deleteFile() {
         recording.delete();
+    }
+
+    public void pause() {
+        state = 2;
+    }
+
+    public void continueRecording() {
+        state = 1;
     }
 
     public String getRecordingFilename() {
@@ -169,6 +184,7 @@ public class Recorder {
                     recorder.release();
                     recorder = null;
                     recordingThread = null;
+                    state = 0;
                 }
                 recordTime = System.currentTimeMillis() - st;
                 Log.d("RECORDTIME", String.valueOf(recordTime));
@@ -182,11 +198,16 @@ public class Recorder {
         return isRecording;
     }
 
+    public int getState() {
+        return state;
+    }
+
     public String getFilePath() {
         return recordingPath;
     }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public int getAudioSessionId(){
+    public int getAudioSessionId() {
         return recorder.getAudioSessionId();
     }
 

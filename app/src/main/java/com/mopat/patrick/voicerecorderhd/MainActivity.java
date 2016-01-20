@@ -32,7 +32,7 @@ import android.widget.Toast;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
-
+private Button pauseRecordingButton;
     private ImageButton recordButton, playButton, myRecordingsButton, stopButton;
     private Recorder recorder;
     private Recording recording;
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (ImageButton) findViewById(R.id.stop_button);
+        pauseRecordingButton = (Button)findViewById(R.id.pause_recording_button);
         myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
@@ -182,6 +183,19 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, MyRecordingsActivity.class);
                 startActivity(i);
+            }
+        });
+        pauseRecordingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(recorder.isRecording()){
+                    recorder.pause();
+                    pauseRecordingButton.setText("continue");
+                }
+                else if ((pauseRecordingButton.getText().toString()).equals("continue")) {
+                    recorder.continueRecording();
+                    pauseRecordingButton.setText("PAUSERECORDING");
+                }
             }
         });
 

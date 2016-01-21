@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private VisualizerView mVisualizerView;
     private Visualizer mVisualizer;
     private byte[] resetBytes;
+    private boolean isRecordingAllowed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         resetBytes = new byte[1024];
         Arrays.fill(resetBytes, (byte) 0);
 
+        isRecordingAllowed = true;
+
         setupVisualizerFxAndUI();
 
  /*       String[] ar = res.getStringArray(R.array.samplerate_array);
@@ -147,27 +150,28 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //reset recording
+                if (recording != null) {
+                    recording.stop();
+                    resetViews();
+                    recording = null;
+                }
+
                 if (!recorder.isRecording()) {
                     recorder.startRecording();
                     setupVisualizerFxAndUI();
                     mVisualizer.setEnabled(true);
-                   // recordButton.setBackgroundResource(R.drawable.ic_stop_black_48dp);
                     recordButton.setBackgroundResource(R.drawable.rec_with_stop);
-                    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-                    anim.setDuration(1000);
-                    anim.setRepeatCount((int)Double.POSITIVE_INFINITY);
-                    anim.setRepeatMode(Animation.REVERSE);
-                    recordButton.startAnimation(anim);
-                    samplerateSpinner.setEnabled(false);
+                    setRecAnimation();
+                    disableViews();
                     resetViews();
                 } else if (recorder.isRecording()) {
-                   // pauseRecordingButton.setBackgroundResource(R.drawable.ic);
                     recorder.stopRecording();
                     showSaveDialog();
                     mVisualizer.setEnabled(false);
                     recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
                     recordButton.clearAnimation();
-                    samplerateSpinner.setEnabled(true);
+                    enableViews();
                 }
             }
         });
@@ -189,8 +193,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recording.stop();
-                playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+                if (recording != null) {
+                    recording.stop();
+                    playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+                }
+
             }
         });
         myRecordingsButton.setOnClickListener(new View.OnClickListener() {
@@ -206,13 +213,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 if (recorder.getState() == 1) {
                     recorder.pause();
                     recordButton.clearAnimation();
+                    pauseRecordingButton.setBackgroundResource(R.drawable.continue_rec);
                 } else if (recorder.getState() == 2) {
                     recorder.continueRecording();
-                    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
-                    anim.setDuration(1000);
-                    anim.setRepeatCount((int)Double.POSITIVE_INFINITY);
-                    anim.setRepeatMode(Animation.REVERSE);
-                    recordButton.startAnimation(anim);
+                    setRecAnimation();
+                    pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+
                 }
             }
         });
@@ -265,12 +271,19 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recording.addStopListener(MainActivity.this);
     }
 
+    private void setRecAnimation() {
+        AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+        anim.setDuration(1000);
+        anim.setRepeatCount((int) Double.POSITIVE_INFINITY);
+        anim.setRepeatMode(Animation.REVERSE);
+        recordButton.startAnimation(anim);
+    }
+
     private void checkIntent() {
         if (getIntent().hasExtra("filepath")) {
             String filePath = getIntent().getStringExtra("filepath");
             String filename = getIntent().getStringExtra("filename");
             String samplerate = getIntent().getStringExtra("samplerate");
-            Log.d("FILEPATH", String.valueOf(getSpinnerIndex(samplerate)));
             initRecording(filePath, filename, Integer.parseInt(samplerate));
             seekBar.setMax(recording.getDurationInMs());
             samplerateSpinner.setSelection(getSpinnerIndex(samplerate));
@@ -298,6 +311,19 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recordDurationTextView.setText(formatTime(0.0));
         filenameTextView.setText("");
         mVisualizerView.updateVisualizer(resetBytes);
+        pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+    }
+
+    private void disableViews() {
+        playButton.setEnabled(false);
+        seekBar.setEnabled(false);
+        samplerateSpinner.setEnabled(false);
+    }
+
+    private void enableViews() {
+        playButton.setEnabled(true);
+        seekBar.setEnabled(true);
+        samplerateSpinner.setEnabled(true);
     }
 
     private int getSpinnerIndex(String samplerate) {
@@ -322,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if (recording.getState() == 1) {
+                if (recording != null && recording.getState() == 1) {
                     recording.pause();
                     //recording.play(lastPlayedBytes * 2);
                 }
@@ -393,21 +419,21 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (recording.getState() != 0)
+                if (recording != null && recording.getState() != 0) {
                     playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
+                }
+
             }
         });
         recording.stop();
-        //seekBar.setProgress(0);
     }
 
     @Override
     public void playbackPaused() {
-        Log.d("PAUSE", "PAUSE");
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (recording.getState() == 2)
+                if (recording != null && recording.getState() == 2)
                     playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
@@ -418,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (recording.getState() == 2)
+                if (recording != null && recording.getState() == 2)
                     playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
@@ -429,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (recording.getState() == 0)
+                if (recording != null && recording.getState() == 0)
                     playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });

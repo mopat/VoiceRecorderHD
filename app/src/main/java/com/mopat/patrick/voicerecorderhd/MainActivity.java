@@ -287,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             initRecording(filePath, filename, Integer.parseInt(samplerate));
             seekBar.setMax(recording.getDurationInMs());
             samplerateSpinner.setSelection(getSpinnerIndex(samplerate));
+            recording.play(0);
         }
     }
 

@@ -18,6 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,8 +35,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
-private Button pauseRecordingButton;
-    private ImageButton recordButton, playButton, myRecordingsButton, stopButton;
+    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -43,7 +44,7 @@ private Button pauseRecordingButton;
     private Resources res;
     private VisualizerView mVisualizerView;
     private Visualizer mVisualizer;
-    private byte[] resetBytes = new byte[1024];
+    private byte[] resetBytes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,7 @@ private Button pauseRecordingButton;
         playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
         stopButton = (ImageButton) findViewById(R.id.stop_button);
-        pauseRecordingButton = (Button)findViewById(R.id.pause_recording_button);
+        pauseRecordingButton = (ImageButton) findViewById(R.id.pause_recording_button);
         myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
@@ -93,7 +94,9 @@ private Button pauseRecordingButton;
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
 
+        resetBytes = new byte[1024];
         Arrays.fill(resetBytes, (byte) 0);
+
         setupVisualizerFxAndUI();
 
  /*       String[] ar = res.getStringArray(R.array.samplerate_array);
@@ -102,7 +105,6 @@ private Button pauseRecordingButton;
     }
 
     private void setupVisualizerFxAndUI() {
-
         // Create the Visualizer object and attach it to our media player.
         mVisualizer = new Visualizer(0);
         mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
@@ -125,6 +127,8 @@ private Button pauseRecordingButton;
                 recorder.renameFile(filename);
                 initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
                 Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
+                mVisualizerView.updateVisualizer(resetBytes);
+                recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -147,15 +151,22 @@ private Button pauseRecordingButton;
                     recorder.startRecording();
                     setupVisualizerFxAndUI();
                     mVisualizer.setEnabled(true);
-                    recordButton.setBackgroundResource(R.drawable.ic_stop_black_48dp);
+                   // recordButton.setBackgroundResource(R.drawable.ic_stop_black_48dp);
+                    recordButton.setBackgroundResource(R.drawable.rec_with_stop);
+                    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                    anim.setDuration(1000);
+                    anim.setRepeatCount((int)Double.POSITIVE_INFINITY);
+                    anim.setRepeatMode(Animation.REVERSE);
+                    recordButton.startAnimation(anim);
                     samplerateSpinner.setEnabled(false);
                     resetViews();
                 } else if (recorder.isRecording()) {
-                    pauseRecordingButton.setText("pauserecording");
+                   // pauseRecordingButton.setBackgroundResource(R.drawable.ic);
                     recorder.stopRecording();
                     showSaveDialog();
                     mVisualizer.setEnabled(false);
                     recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
+                    recordButton.clearAnimation();
                     samplerateSpinner.setEnabled(true);
                 }
             }
@@ -167,10 +178,10 @@ private Button pauseRecordingButton;
                 if (recording != null) {
                     if (recording.getState() == 2 || recording.getState() == 0) {
                         recording.play(seekBar.getProgress() * 2);
-                        playButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+                        playButton.setBackgroundResource(R.drawable.ic_pause_black_48dp);
                     } else if (recording.getState() == 1) {
                         recording.pause();
-                        playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+                        playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
                     }
                 }
             }
@@ -179,7 +190,7 @@ private Button pauseRecordingButton;
             @Override
             public void onClick(View v) {
                 recording.stop();
-                playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+                playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
         myRecordingsButton.setOnClickListener(new View.OnClickListener() {
@@ -194,10 +205,14 @@ private Button pauseRecordingButton;
             public void onClick(View v) {
                 if (recorder.getState() == 1) {
                     recorder.pause();
-                    pauseRecordingButton.setText("continue");
+                    recordButton.clearAnimation();
                 } else if (recorder.getState() == 2) {
                     recorder.continueRecording();
-                    pauseRecordingButton.setText("PAUSERECORDING");
+                    AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
+                    anim.setDuration(1000);
+                    anim.setRepeatCount((int)Double.POSITIVE_INFINITY);
+                    anim.setRepeatMode(Animation.REVERSE);
+                    recordButton.startAnimation(anim);
                 }
             }
         });
@@ -379,7 +394,7 @@ private Button pauseRecordingButton;
             @Override
             public void run() {
                 if (recording.getState() != 0)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
         recording.stop();
@@ -393,7 +408,7 @@ private Button pauseRecordingButton;
             @Override
             public void run() {
                 if (recording.getState() == 2)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
     }
@@ -404,7 +419,7 @@ private Button pauseRecordingButton;
             @Override
             public void run() {
                 if (recording.getState() == 2)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
     }
@@ -415,7 +430,7 @@ private Button pauseRecordingButton;
             @Override
             public void run() {
                 if (recording.getState() == 0)
-                    playButton.setBackgroundResource(R.drawable.ic_play_circle_filled_black_48dp);
+                    playButton.setBackgroundResource(R.drawable.ic_play_arrow_black_48dp);
             }
         });
     }

@@ -224,9 +224,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
             Log.d("Files", "FileName:" + file[i].getName());
             myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
         }
-        myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, myRecordings);
+        myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
+
         myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
         myRecordingsArrayAdapter.notifyDataSetChanged();
+        Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
     }
 
     @Override

@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
@@ -42,6 +43,7 @@ private Button pauseRecordingButton;
     private Resources res;
     private VisualizerView mVisualizerView;
     private Visualizer mVisualizer;
+    private byte[] resetBytes = new byte[1024];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,7 @@ private Button pauseRecordingButton;
         playbackTime.setText(formatTime(0.0));
         durationTime.setText(formatTime(0.0));
 
+        Arrays.fill(resetBytes, (byte) 0);
         setupVisualizerFxAndUI();
 
  /*       String[] ar = res.getStringArray(R.array.samplerate_array);
@@ -148,6 +151,7 @@ private Button pauseRecordingButton;
                     samplerateSpinner.setEnabled(false);
                     resetViews();
                 } else if (recorder.isRecording()) {
+                    pauseRecordingButton.setText("pauserecording");
                     recorder.stopRecording();
                     showSaveDialog();
                     mVisualizer.setEnabled(false);
@@ -188,11 +192,10 @@ private Button pauseRecordingButton;
         pauseRecordingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(recorder.getState() == 1){
+                if (recorder.getState() == 1) {
                     recorder.pause();
                     pauseRecordingButton.setText("continue");
-                }
-                else if (recorder.getState() == 2) {
+                } else if (recorder.getState() == 2) {
                     recorder.continueRecording();
                     pauseRecordingButton.setText("PAUSERECORDING");
                 }
@@ -279,6 +282,7 @@ private Button pauseRecordingButton;
         durationTime.setText(formatTime(0.0));
         recordDurationTextView.setText(formatTime(0.0));
         filenameTextView.setText("");
+        mVisualizerView.updateVisualizer(resetBytes);
     }
 
     private int getSpinnerIndex(String samplerate) {
@@ -361,9 +365,7 @@ private Button pauseRecordingButton;
             @Override
             public void run() {
                 double currentTime = byteToInt(bytesread);
-
                 seekBar.setProgress((int) (currentTime));
-                //lastPlayedBytes = (int) (currentTime);
                 String currentTimeString = formatTime(currentTime);
                 playbackTime.setText(currentTimeString);
             }

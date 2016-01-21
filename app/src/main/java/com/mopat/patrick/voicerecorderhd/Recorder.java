@@ -133,9 +133,7 @@ public class Recorder {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-            else if(state == 2){
-                Log.d("PAUSED", "PAUSED");
+            } else if (state == 2) {
             }
         }
         setMetadata();
@@ -169,7 +167,8 @@ public class Recorder {
     }
 
     public void continueRecording() {
-        state = 1;Log.d("CONTINUE", String.valueOf(state));    }
+        state = 1;
+    }
 
     public String getRecordingFilename() {
         return recordingFilename;

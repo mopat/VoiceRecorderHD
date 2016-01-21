@@ -188,11 +188,11 @@ private Button pauseRecordingButton;
         pauseRecordingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(recorder.isRecording()){
+                if(recorder.getState() == 1){
                     recorder.pause();
                     pauseRecordingButton.setText("continue");
                 }
-                else if ((pauseRecordingButton.getText().toString()).equals("continue")) {
+                else if (recorder.getState() == 2) {
                     recorder.continueRecording();
                     pauseRecordingButton.setText("PAUSERECORDING");
                 }

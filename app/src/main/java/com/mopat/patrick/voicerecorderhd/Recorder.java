@@ -119,9 +119,9 @@ public class Recorder {
         }
         state = 1;
         while (isRecording) {
-            Log.d("CONTINUE", "CONTINUE");
-            if (state == 1) {
 
+            if (state == 1) {
+                Log.d("RECORDING", "RECORDING");
                 recorder.read(sData, 0, BufferElements2Rec);
                 try {
                     byte bData[] = short2byte(sData);
@@ -133,6 +133,9 @@ public class Recorder {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+            else if(state == 2){
+                Log.d("PAUSED", "PAUSED");
             }
         }
         setMetadata();
@@ -166,8 +169,7 @@ public class Recorder {
     }
 
     public void continueRecording() {
-        state = 1;
-    }
+        state = 1;Log.d("CONTINUE", String.valueOf(state));    }
 
     public String getRecordingFilename() {
         return recordingFilename;

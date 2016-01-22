@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
-    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView;
+    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView, filesizeTextView;
     private Spinner samplerateSpinner;
     private Resources res;
     private VisualizerView mVisualizerView;
@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
         recordDurationTextView = (TextView) findViewById(R.id.record_duration_textview);
+        filesizeTextView = (TextView) findViewById(R.id.filesize_text_view);
         mVisualizerView = (VisualizerView) findViewById(R.id.myvisualizerview);
         mVisualizerView.updateVisualizer(resetBytes);
         recorder = new Recorder(getApplicationContext());
@@ -263,7 +264,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void initRecording(String filePath, String filename, int samplerate) {
         recording = new Recording(filePath, samplerate, MainActivity.this);
         filenameTextView.setText(filename);
+        Log.d("filesize", String.valueOf(recording.getFileSize()));
         recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
+        filesizeTextView.setText(recording.getFormattedFileSize());
         durationTime.setText(formatTime(recording.getDurationInMs()));
         seekBar.setMax(recording.getDurationInMs());
 

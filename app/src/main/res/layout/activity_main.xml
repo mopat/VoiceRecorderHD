@@ -53,15 +53,16 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/ic_mic_black_48dp"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="70dp"
+        android:background="@drawable/ic_mic_black_48dp" />
+
     <ImageButton
         android:id="@+id/pause_recording_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/ic_pause_circle_filled_black_48dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:background="@drawable/ic_pause_circle_filled_black_48dp" />
 
     <TextView
         android:id="@+id/record_duration_textview"
@@ -83,6 +84,16 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:textColor="#000" />
+
+
+    <TextView
+        android:id="@+id/filesize_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textColor="#000"
+        android:text="256kb" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,15 +113,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:clickable="false"
-            android:enabled="false"
-            />
+            android:enabled="false" />
+
         <ImageButton
             android:id="@+id/stop_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/ic_stop_black_48dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
 
 

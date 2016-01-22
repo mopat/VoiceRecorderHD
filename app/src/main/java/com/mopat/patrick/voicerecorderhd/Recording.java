@@ -22,7 +22,7 @@ public class Recording {
     private Context context;
     private String filepPath;
     private byte[] byteData;
-    private int fileLength, lastPlayed;
+    private int fileSize, lastPlayed;
     private File file;
     private AudioManager am;
     private int state;
@@ -35,11 +35,11 @@ public class Recording {
 
     public Recording(String filePath, int samplerate, Context context) {
         this.context = context;
-        am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        am = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
         this.filepPath = filePath;
         this.file = new File(filePath);
-        this.fileLength = (int) file.length();
-        this.byteData = new byte[fileLength];
+        this.fileSize = (int) file.length();
+        this.byteData = new byte[fileSize];
         this.state = 0;
         this.samplerate = samplerate;
     }
@@ -96,7 +96,7 @@ public class Recording {
                 byte[] byties = invert(byteData);
                 if (state != 1) {
                     state = 1;
-                    while (bytesread <= fileLength) {
+                    while (bytesread <= fileSize) {
                         if (state == 1) {
                             try {
                                 ret = in.read(byteData, 0, count);
@@ -143,25 +143,25 @@ public class Recording {
         }).start();
     }
 
-    public void delete(){
+    public void delete() {
         file.delete();
     }
 
     private byte[] invert(byte[] bytes) {
-    byte[] invertedBytes = new byte[bytes.length];
+        byte[] invertedBytes = new byte[bytes.length];
 
-        for(int i = 0; i < bytes.length; i++){
-            invertedBytes[bytes.length-i-1] = bytes[i];
+        for (int i = 0; i < bytes.length; i++) {
+            invertedBytes[bytes.length - i - 1] = bytes[i];
         }
         return invertedBytes;
     }
 
-    public String getFilepPath(){
+    public String getFilepPath() {
         return filepPath;
     }
 
     public int getFileSize() {
-        return fileLength;
+        return fileSize;
     }
 
     public int getState() {
@@ -174,6 +174,20 @@ public class Recording {
 
     private int skipToNumberOfBytes(double skip) {
         return (int) (skip / 1000 * Config.sampleRate);
+    }
+
+    public String getFormattedFileSize() {
+        int length = (int) (Math.log10(fileSize) + 1);
+        if (length > 6)
+            return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "Mb");
+        else if (length > 3 && length < 7)
+            return String.valueOf(fileSize / 1000 + "Kb");
+
+        return "NaN";
+    }
+
+    private double twoDecimals(double num) {
+        return Math.round(num * 10.0) / 10.0;
     }
 
     /* Methods for interfaces*/

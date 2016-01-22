@@ -220,7 +220,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
             String samplerate = metadata.getComment();
             String filename = file[i].getName();
             String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
-            String filesize = String.valueOf(file[i].length());
+            String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
             Log.d("Files", "FileName:" + file[i].getName());
             myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
         }

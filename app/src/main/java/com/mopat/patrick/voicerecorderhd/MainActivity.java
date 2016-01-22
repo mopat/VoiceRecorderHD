@@ -31,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         filenameTextView.setText(filename);
         Log.d("filesize", String.valueOf(recording.getFileSize()));
         recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
-        filesizeTextView.setText(recording.getFormattedFileSize());
+        filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recording.getFileSize()));
         durationTime.setText(formatTime(recording.getDurationInMs()));
         seekBar.setMax(recording.getDurationInMs());
 
@@ -481,22 +482,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 double currentTime = byteToInt(recordedBytes);
                 String currentTimeString = formatTime(currentTime);
                 recordDurationTextView.setText(currentTimeString);
-                filesizeTextView.setText(getFormattedFileSize(recordedBytes));
+                filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recordedBytes));
             }
         });
     }
 
-    public String getFormattedFileSize(int fileSize) {
-        int length = (int) (Math.log10(fileSize) + 1);
-        if (length > 6)
-            return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "MB") + "\n " + "Samplerate: " + String.valueOf(Config.sampleRate) + "Hz";
-        else if (length > 3 && length < 7)
-            return String.valueOf(fileSize / 1000 + "KB") + "\n " + "Samplerate: " + String.valueOf(Config.sampleRate) + "Hz";
-
-        return "NaN";
-    }
-
-    private double twoDecimals(double num) {
-        return Math.round(num * 10.0) / 10.0;
-    }
 }

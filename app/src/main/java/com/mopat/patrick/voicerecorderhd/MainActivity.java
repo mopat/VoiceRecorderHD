@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
                 mVisualizerView.updateVisualizer(resetBytes);
                 recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
+                pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

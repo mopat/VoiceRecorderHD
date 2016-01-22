@@ -4,14 +4,15 @@ package com.mopat.patrick.voicerecorderhd;
  * Created by Patrick on 12.01.2016.
  */
 public class MyRecordingsListitem {
-    private String filename, samplerate, filesize, duration;
+    private String filename, samplerate, filesize, duration, modifiedDate;
     private boolean checked;
 
-    public MyRecordingsListitem(String filename, String samplerate, String filesize, String duration, boolean checked) {
+    public MyRecordingsListitem(String filename, String samplerate, String filesize, String duration, String modifiedDate, boolean checked) {
         this.filename = filename;
         this.samplerate = samplerate;
         this.filesize = filesize;
         this.duration = duration;
+        this.modifiedDate = modifiedDate;
         this.checked = checked;
     }
 
@@ -46,4 +47,7 @@ public class MyRecordingsListitem {
         checked = !checked;
     }
 
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
 }

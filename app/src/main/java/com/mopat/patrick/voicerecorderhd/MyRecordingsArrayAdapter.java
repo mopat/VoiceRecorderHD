@@ -46,11 +46,13 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
         TextView samplerate = (TextView)vi.findViewById(R.id.samplerate_value);
         TextView size = (TextView)vi.findViewById(R.id.size_value);
         TextView duration = (TextView)vi.findViewById(R.id.duration_value);
+        TextView modified = (TextView) vi.findViewById(R.id.modified_data);
 
         filename.setText(recordings.get(position).getName());
-        samplerate.setText(recordings.get(position).getSamplerate());
+        samplerate.setText("samplerate: " + recordings.get(position).getSamplerate() + "Hz");
         size.setText(recordings.get(position).getFilesize());
         duration.setText(recordings.get(position).getDuration());
+        modified.setText(recordings.get(position).getModifiedDate());
         return vi;
     }
 }

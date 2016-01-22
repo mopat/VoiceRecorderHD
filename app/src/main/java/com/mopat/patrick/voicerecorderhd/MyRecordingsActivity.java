@@ -27,7 +27,9 @@ import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class MyRecordingsActivity extends AppCompatActivity {
@@ -216,13 +218,18 @@ public class MyRecordingsActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             IMusicMetadata metadata = srcSet.getSimplified();
             String samplerate = metadata.getComment();
             String filename = file[i].getName();
             String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
             String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
+            String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
+                    new Date(file[i].lastModified())
+            );
+            ;
             Log.d("Files", "FileName:" + file[i].getName());
-            myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, false));
+            myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
         }
         myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
 

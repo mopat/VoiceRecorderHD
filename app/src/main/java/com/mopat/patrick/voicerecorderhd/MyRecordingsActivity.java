@@ -47,12 +47,12 @@ public class MyRecordingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        init();
-        displayMyRecordings();
-        initListeners();
         android.support.v7.app.ActionBar ab = getSupportActionBar();
         ab.setDisplayShowTitleEnabled(false);
         ab.setDisplayHomeAsUpEnabled(true);
+        init();
+        displayMyRecordings();
+        initListeners();
     }
 
     @Override

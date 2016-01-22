@@ -26,7 +26,8 @@
     <ListView
         android:id="@+id/my_recordings_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"></ListView>
 
 
 

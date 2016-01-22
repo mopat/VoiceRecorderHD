@@ -49,7 +49,7 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
         TextView modified = (TextView) vi.findViewById(R.id.modified_data);
 
         filename.setText(recordings.get(position).getName());
-        samplerate.setText("samplerate: " + recordings.get(position).getSamplerate() + "Hz");
+        samplerate.setText(recordings.get(position).getSamplerate() + "Hz");
         size.setText(recordings.get(position).getFilesize());
         duration.setText(recordings.get(position).getDuration());
         modified.setText(recordings.get(position).getModifiedDate());

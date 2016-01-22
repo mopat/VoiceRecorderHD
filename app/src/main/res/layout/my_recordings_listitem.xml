@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:padding="10dp">
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/filename"
@@ -12,8 +12,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="FILENAME"
-        android:textColor="#000"
-        android:textSize="18sp" />
+        android:textColor="@color/listItemMain"
+        android:textSize="@dimen/list_item_main_font_size" />
 
     <TextView
         android:id="@+id/duration_value"
@@ -22,9 +22,10 @@
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@id/filename"
         android:text="22100"
-        android:textColor="#000"
-        android:textSize="18sp" />
+        android:textColor="@color/listItemMain"
+        android:textSize="@dimen/list_item_main_font_size" />
 
+    <!--Metadata-->
 
     <TextView
         android:id="@+id/modified_data"
@@ -33,8 +34,8 @@
         android:layout_below="@+id/filename"
         android:paddingTop="3dp"
         android:text="22.01.2016, 12:11"
-        android:textColor="#000"
-        android:textSize="@dimen/alert_font_size" />
+        android:textColor="@color/listItemMetadata"
+        android:textSize="@dimen/list_item_meta_font_size" />
 
     <TextView
         android:id="@+id/size_value"
@@ -44,20 +45,8 @@
         android:layout_alignLeft="@+id/duration_value"
         android:layout_alignStart="@+id/duration_value"
         android:text="250kb"
-        android:textColor="#000"
-        android:textSize="@dimen/alert_font_size" />
-
-
-    <CheckBox
-        android:id="@+id/listitem_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/duration_time"
-        android:checked="false"
-        android:scaleX="1.2"
-        android:scaleY="1.2" />
-
+        android:textColor="@color/listItemMetadata"
+        android:textSize="@dimen/list_item_meta_font_size" />
 
     <TextView
         android:id="@+id/samplerate_value"
@@ -68,7 +57,18 @@
         android:layout_below="@id/modified_data"
         android:paddingTop="3dp"
         android:text="44100"
-        android:textColor="#000"
-        android:visibility="gone"
-        android:textSize="@dimen/alert_font_size" />
+        android:textColor="@color/listItemMetadata"
+        android:textSize="@dimen/list_item_meta_font_size" />
+
+    <CheckBox
+        android:id="@+id/listitem_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/duration_time"
+        android:checked="false"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        android:visibility="gone" />
+
 </RelativeLayout>

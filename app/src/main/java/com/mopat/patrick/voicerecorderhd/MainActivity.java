@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
                 String filename = recorder.getRecordingFilename();
                 recorder.renameFile(filename);
-                Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "File stored at " + Absolutes.DIRECTORY + "/" + filename, Toast.LENGTH_LONG).show();
                 mVisualizerView.updateVisualizer(resetBytes);
                 recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
-                pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+                pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 recorder.deleteFile();
                 resetViews();
                 Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
+                pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
             }
         });
         saveRecordingDialog.show();
@@ -168,11 +169,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     setRecAnimation();
                     disableViews();
                     resetViews();
+                    pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();
                     mVisualizer.setEnabled(false);
                     recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
+                    pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                     recordButton.clearAnimation();
                     enableViews();
                 }
@@ -221,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     recorder.continueRecording();
                     setRecAnimation();
                     pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
-
                 }
             }
         });
@@ -319,7 +321,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recordDurationTextView.setText(formatTime(0.0));
         filenameTextView.setText("");
         mVisualizerView.updateVisualizer(resetBytes);
-        pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+        filesizeTextView.setText("");
+        pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
     }
 
     private void disableViews() {
@@ -478,7 +481,22 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 double currentTime = byteToInt(recordedBytes);
                 String currentTimeString = formatTime(currentTime);
                 recordDurationTextView.setText(currentTimeString);
+                filesizeTextView.setText(getFormattedFileSize(recordedBytes));
             }
         });
+    }
+
+    public String getFormattedFileSize(int fileSize) {
+        int length = (int) (Math.log10(fileSize) + 1);
+        if (length > 6)
+            return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "MB") + "\n " + "Samplerate: " + String.valueOf(Config.sampleRate) + "Hz";
+        else if (length > 3 && length < 7)
+            return String.valueOf(fileSize / 1000 + "KB") + "\n " + "Samplerate: " + String.valueOf(Config.sampleRate) + "Hz";
+
+        return "NaN";
+    }
+
+    private double twoDecimals(double num) {
+        return Math.round(num * 10.0) / 10.0;
     }
 }

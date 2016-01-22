@@ -128,10 +128,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                String filename = filenameEditText.getText().toString();
-                recorder.renameFile(filename);
                 initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
-                Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
+                String filename = recorder.getRecordingFilename();
+                recorder.renameFile(filename);
+                Toast.makeText(getApplicationContext(), "File saved under " + Absolutes.DIRECTORY + "/" + filename, Toast.LENGTH_LONG).show();
                 mVisualizerView.updateVisualizer(resetBytes);
                 recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);

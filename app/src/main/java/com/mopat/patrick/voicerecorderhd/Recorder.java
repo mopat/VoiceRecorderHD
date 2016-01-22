@@ -108,6 +108,7 @@ public class Recorder {
         int numOfFilesInDirectory = Absolutes.DIRECTORY.list().length;
         recordingFilename = Absolutes.RECORDING_DEF_NAME + String.valueOf(numOfFilesInDirectory + Config.filetype);
         recording = new File(Absolutes.DIRECTORY + "/" + recordingFilename);
+        Log.d("DIRECTORY", recordingFilename);
         int written = 0;
         short sData[] = new short[BufferElements2Rec];
         recordingPath = recording.getAbsolutePath();
@@ -153,7 +154,7 @@ public class Recorder {
 
     public void renameFile(String filename) {
         recordingFilename = filename;
-        File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
+        File from = new File(Absolutes.DIRECTORY, recordingFilename);
         File to = new File(Absolutes.DIRECTORY, recordingFilename);
         from.renameTo(to);
     }

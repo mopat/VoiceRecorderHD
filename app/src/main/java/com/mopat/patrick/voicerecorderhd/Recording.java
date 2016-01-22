@@ -179,9 +179,9 @@ public class Recording {
     public String getFormattedFileSize() {
         int length = (int) (Math.log10(fileSize) + 1);
         if (length > 6)
-            return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "Mb");
+            return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "MB") + "\n " + "Samplerate: " + String.valueOf(samplerate) + "Hz";
         else if (length > 3 && length < 7)
-            return String.valueOf(fileSize / 1000 + "Kb");
+            return String.valueOf(fileSize / 1000 + "KB") + "\n " + "Samplerate: " + String.valueOf(samplerate) + "Hz";
 
         return "NaN";
     }

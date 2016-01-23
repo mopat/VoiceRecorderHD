@@ -1,5 +1,7 @@
 package com.mopat.patrick.voicerecorderhd;
 
+import android.util.Log;
+
 /**
  * Created by Patrick on 12.01.2016.
  */
@@ -37,6 +39,7 @@ public class MyRecordingsListitem {
     }
 
     public void setChecked(boolean checked) {
+        Log.d("CHECKED", String.valueOf(checked));
         this.checked = checked;
     }
 

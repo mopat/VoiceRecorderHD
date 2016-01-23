@@ -301,11 +301,12 @@ public class MyRecordingsActivity extends AppCompatActivity {
                     if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
                         String filename = myRecordingsArrayAdapter.getItem(i).getName();
                         String filePath = Absolutes.DIRECTORY + "/" + filename;
+                        Log.d("FILENAME", filename);
                         final File file = new File(filePath);
                         file.delete();
-                        backFunction();
                     }
                 }
+                backFunction();
                 myRecordings.clear();
                 displayMyRecordings();
             }

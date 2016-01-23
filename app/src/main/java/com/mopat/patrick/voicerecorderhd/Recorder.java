@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -39,6 +40,7 @@ public class Recorder {
     private boolean isRecording = false;
     private String recordingPath = null, recordingFilename = null;
     long recordTime, st;
+    private int filesize;
     int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
             RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
     private List<RecordingListener> recordingListenerList = new ArrayList<>();
@@ -92,6 +94,9 @@ public class Recorder {
         }
         MusicMetadata musicMetadata = new MusicMetadata("name");
         musicMetadata.setArtist(context.getResources().getString(R.string.app_name));
+        int durationSeconds = filesize / (Config.sampleRate * 2);
+        Log.d("dur", String.valueOf(durationSeconds));
+        //musicMetadata.setDurationSeconds(String.valueOf(durationSeconds));
         musicMetadata.setComment(String.valueOf(Config.sampleRate));
 
         try {
@@ -101,6 +106,14 @@ public class Recorder {
         } catch (ID3WriteException e) {
             e.printStackTrace();
         }
+    }
+
+    private String formatTime(double timeInMs) {
+        return String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
+                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
+                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
+        );
     }
 
     private void writeAudioDataToFile() {
@@ -131,6 +144,7 @@ public class Recorder {
                     written += bData.length;
 
                     triggerWrittenBytes(written, bData);
+                    filesize = written;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

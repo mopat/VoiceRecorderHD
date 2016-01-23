@@ -191,10 +191,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
         return metadata.getComment();
     }
 
-    private void setupListView() {
-
-    }
-
     private String formatTime(double timeInMs) {
         return String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
@@ -303,12 +299,9 @@ public class MyRecordingsActivity extends AppCompatActivity {
         adb.setNegativeButton("Cancel", null);
         adb.setPositiveButton("Yes", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-                    View v = myRecordingsListView.getChildAt(i);
-                    CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
-                    TextView filenameTextView = (TextView) v.findViewById(R.id.filename);
-                    if (checkBox.isChecked()) {
-                        String filename = (String) filenameTextView.getText();
+                for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+                    if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
+                        String filename = myRecordingsArrayAdapter.getItem(i).getName();
                         String filePath = Absolutes.DIRECTORY + "/" + filename;
                         final File file = new File(filePath);
                         file.delete();

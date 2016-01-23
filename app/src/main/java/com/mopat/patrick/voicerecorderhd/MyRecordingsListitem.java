@@ -40,9 +40,10 @@ public class MyRecordingsListitem {
         this.checked = checked;
     }
 
-    public void uncheck(){
+    public void uncheck() {
         checked = false;
     }
+
     public void toggleChecked() {
         checked = !checked;
     }

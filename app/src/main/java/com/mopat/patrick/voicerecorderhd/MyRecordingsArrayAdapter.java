@@ -38,7 +38,7 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if (vi == null)
             vi = inflater.inflate(R.layout.my_recordings_listitem, null);
@@ -47,7 +47,7 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
         TextView size = (TextView) vi.findViewById(R.id.size_value);
         TextView duration = (TextView) vi.findViewById(R.id.duration_value);
         TextView modified = (TextView) vi.findViewById(R.id.modified_data);
-        CheckBox checkBox = (CheckBox) vi.findViewById(R.id.listitem_checkbox);
+        final CheckBox checkBox = (CheckBox) vi.findViewById(R.id.listitem_checkbox);
 
         filename.setText(recordings.get(position).getName());
         samplerate.setText(recordings.get(position).getSamplerate() + "Hz");
@@ -58,6 +58,15 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
             checkBox.setVisibility(View.VISIBLE);
         else checkBox.setVisibility(View.INVISIBLE);
 
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()) {
+                    recordings.get(position).setChecked(true);
+                } else recordings.get(position).setChecked(false);
+
+            }
+        });
         checkBox.setChecked(recordings.get(position).isChecked());
 
         return vi;

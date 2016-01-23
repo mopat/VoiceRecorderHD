@@ -12,15 +12,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
-    ArrayList<MyRecordingsListitem> recordings;
+    ArrayList<MyRecordingsListitem> myRecordingsListitems;
     Context context;
     private static LayoutInflater inflater;
 
-    public MyRecordingsArrayAdapter(Context context, int viewId, ArrayList<MyRecordingsListitem> recordings) {
-        super(context, viewId, recordings);
+    public MyRecordingsArrayAdapter(Context context, int viewId, ArrayList<MyRecordingsListitem> myRecordingsListitems) {
+        super(context, viewId, myRecordingsListitems);
 
         this.context = context;
-        this.recordings = recordings;
+        this.myRecordingsListitems = myRecordingsListitems;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -28,7 +28,7 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
 
     @Override
     public int getCount() {
-        return recordings.size();
+        return myRecordingsListitems.size();
     }
 
 
@@ -49,12 +49,12 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
         TextView modified = (TextView) vi.findViewById(R.id.modified_data);
         final CheckBox checkBox = (CheckBox) vi.findViewById(R.id.listitem_checkbox);
 
-        filename.setText(recordings.get(position).getName());
-        samplerate.setText(recordings.get(position).getSamplerate() + "Hz");
-        size.setText(recordings.get(position).getFilesize());
-        duration.setText(recordings.get(position).getDuration());
-        modified.setText(recordings.get(position).getModifiedDate());
-        if (recordings.get(position).isCheckboxVisible())
+        filename.setText(myRecordingsListitems.get(position).getName());
+        samplerate.setText(myRecordingsListitems.get(position).getSamplerate() + "Hz");
+        size.setText(myRecordingsListitems.get(position).getFilesize());
+        duration.setText(myRecordingsListitems.get(position).getDuration());
+        modified.setText(myRecordingsListitems.get(position).getModifiedDate());
+        if (myRecordingsListitems.get(position).isCheckboxVisible())
             checkBox.setVisibility(View.VISIBLE);
         else checkBox.setVisibility(View.INVISIBLE);
 
@@ -62,12 +62,12 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
             @Override
             public void onClick(View v) {
                 if (checkBox.isChecked()) {
-                    recordings.get(position).setChecked(true);
-                } else recordings.get(position).setChecked(false);
+                    myRecordingsListitems.get(position).setChecked(true);
+                } else myRecordingsListitems.get(position).setChecked(false);
 
             }
         });
-        checkBox.setChecked(recordings.get(position).isChecked());
+        checkBox.setChecked(myRecordingsListitems.get(position).isChecked());
 
         return vi;
     }

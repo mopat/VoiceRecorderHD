@@ -305,6 +305,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                         String filePath = Absolutes.DIRECTORY + "/" + filename;
                         final File file = new File(filePath);
                         file.delete();
+                        backFunction();
                     }
                 }
                 myRecordings.clear();
@@ -340,7 +341,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         backFunction();
-
     }
 
     private void backFunction() {

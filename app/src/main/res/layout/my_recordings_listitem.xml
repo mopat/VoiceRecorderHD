@@ -5,12 +5,27 @@
     android:descendantFocusability="blocksDescendants"
     android:padding="5dp">
 
+    <LinearLayout
+        android:id="@+id/mp3_icon_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:paddingTop="10dp"
+            android:background="@drawable/mp3_icon" />
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/filename"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_toRightOf="@id/mp3_icon_layout"
         android:text="FILENAME"
         android:textColor="@color/listItemMain"
         android:textSize="@dimen/list_item_main_font_size" />
@@ -19,7 +34,7 @@
         android:id="@+id/duration_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/filename"
         android:text="22100"
         android:textColor="@color/listItemMain"
@@ -32,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/filename"
+        android:layout_toRightOf="@id/mp3_icon_layout"
         android:paddingTop="3dp"
         android:text="22.01.2016, 12:11"
         android:textColor="@color/listItemMetadata"
@@ -39,7 +55,7 @@
 
     <TextView
         android:id="@+id/size_value"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/modified_data"
         android:layout_alignLeft="@+id/duration_value"
@@ -52,9 +68,8 @@
         android:id="@+id/samplerate_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/modified_data"
+        android:layout_toRightOf="@id/mp3_icon_layout"
         android:paddingTop="3dp"
         android:text="44100"
         android:textColor="@color/listItemMetadata"

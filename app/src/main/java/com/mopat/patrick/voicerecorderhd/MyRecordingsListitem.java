@@ -5,7 +5,7 @@ package com.mopat.patrick.voicerecorderhd;
  */
 public class MyRecordingsListitem {
     private String filename, samplerate, filesize, duration, modifiedDate;
-    private boolean checked;
+    private boolean checked, checkboxVisible;
 
     public MyRecordingsListitem(String filename, String samplerate, String filesize, String duration, String modifiedDate, boolean checked) {
         this.filename = filename;
@@ -49,5 +49,13 @@ public class MyRecordingsListitem {
 
     public String getModifiedDate() {
         return modifiedDate;
+    }
+
+    public boolean isCheckboxVisible() {
+        return checkboxVisible;
+    }
+
+    public void setCheckboxVisible(boolean checkboxVisible) {
+        this.checkboxVisible = checkboxVisible;
     }
 }

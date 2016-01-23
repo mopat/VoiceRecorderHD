@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
     }
 
 
-
     @Override
     public long getItemId(int position) {
         return position;
@@ -43,16 +43,23 @@ class MyRecordingsArrayAdapter extends ArrayAdapter<MyRecordingsListitem> {
         if (vi == null)
             vi = inflater.inflate(R.layout.my_recordings_listitem, null);
         TextView filename = (TextView) vi.findViewById(R.id.filename);
-        TextView samplerate = (TextView)vi.findViewById(R.id.samplerate_value);
-        TextView size = (TextView)vi.findViewById(R.id.size_value);
-        TextView duration = (TextView)vi.findViewById(R.id.duration_value);
+        TextView samplerate = (TextView) vi.findViewById(R.id.samplerate_value);
+        TextView size = (TextView) vi.findViewById(R.id.size_value);
+        TextView duration = (TextView) vi.findViewById(R.id.duration_value);
         TextView modified = (TextView) vi.findViewById(R.id.modified_data);
+        CheckBox checkBox = (CheckBox) vi.findViewById(R.id.listitem_checkbox);
 
         filename.setText(recordings.get(position).getName());
         samplerate.setText(recordings.get(position).getSamplerate() + "Hz");
         size.setText(recordings.get(position).getFilesize());
         duration.setText(recordings.get(position).getDuration());
         modified.setText(recordings.get(position).getModifiedDate());
+        if (recordings.get(position).isCheckboxVisible())
+            checkBox.setVisibility(View.VISIBLE);
+        else checkBox.setVisibility(View.INVISIBLE);
+
+        checkBox.setChecked(recordings.get(position).isChecked());
+
         return vi;
     }
 }

@@ -170,7 +170,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
     public void renameFile(String filename, String newFilename) {
         File from = new File(Absolutes.DIRECTORY, filename);
         File to = new File(Absolutes.DIRECTORY, newFilename);
-        if(from.renameTo(to))
+        if (from.renameTo(to))
             Toast.makeText(getApplicationContext(), "File renamed", Toast.LENGTH_LONG).show();
         else
             Toast.makeText(getApplicationContext(), "File renaming not possible", Toast.LENGTH_LONG).show();
@@ -332,19 +332,20 @@ public class MyRecordingsActivity extends AppCompatActivity {
     }
 
     private void selectUnselectAll() {
-        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-            View v = myRecordingsListView.getChildAt(i);
-            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
+        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
             if (allSelected)
-                checkBox.setChecked(true);
+                myRecordingsArrayAdapter.getItem(i).setChecked(true);
             else
-                checkBox.setChecked(false);
+                myRecordingsArrayAdapter.getItem(i).setChecked(false);
+
         }
+        myRecordingsArrayAdapter.notifyDataSetChanged();
+        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+
     }
 
     @Override
     public void onBackPressed() {
-        // moveTaskToBack(true);
         backFunction();
 
     }
@@ -360,19 +361,19 @@ public class MyRecordingsActivity extends AppCompatActivity {
     }
 
     private void hideCheckBoxes() {
-        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-            View v = myRecordingsListView.getChildAt(i);
-            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
-            checkBox.setVisibility(View.INVISIBLE);
+        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+            myRecordingsArrayAdapter.getItem(i).setCheckboxVisible(false);
         }
+        myRecordingsArrayAdapter.notifyDataSetChanged();
+        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
     }
 
     private void showCheckBoxes() {
-        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-            View v = myRecordingsListView.getChildAt(i);
-            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
-            checkBox.setVisibility(View.VISIBLE);
+        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+            myRecordingsArrayAdapter.getItem(i).setCheckboxVisible(true);
         }
+        myRecordingsArrayAdapter.notifyDataSetChanged();
+        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
     }
 
     private void toggleAllSelected() {

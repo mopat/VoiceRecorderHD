@@ -278,13 +278,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
     private ArrayList<Uri> getSelectedItems() {
         ArrayList<Uri> fileUris = new ArrayList<>();
-        for (int i = 0; i < myRecordingsListView.getChildCount(); i++) {
-            View v = myRecordingsListView.getChildAt(i);
-            CheckBox checkBox = (CheckBox) v.findViewById(R.id.listitem_checkbox);
-            TextView filenameTextView = (TextView) v.findViewById(R.id.filename);
-            if (checkBox.isChecked()) {
-                String filename = (String) filenameTextView.getText();
+        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+            if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
+                String filename = myRecordingsArrayAdapter.getItem(i).getName();
                 String filePath = Absolutes.DIRECTORY + "/" + filename;
+                final File file = new File(filePath);
                 Uri fileUri = Uri.parse(filePath);
                 fileUris.add(fileUri);
             }

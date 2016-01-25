@@ -286,9 +286,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             String filePath = getIntent().getStringExtra("filepath");
             String filename = getIntent().getStringExtra("filename");
             String samplerate = getIntent().getStringExtra("samplerate");
+            Config.sampleRate = Integer.parseInt(samplerate);
             initRecording(filePath, filename, Integer.parseInt(samplerate));
             seekBar.setMax(recording.getDurationInMs());
             samplerateSpinner.setSelection(getSpinnerIndex(samplerate));
+            storeSampleRate(getSpinnerIndex(samplerate));
             playButton.setBackgroundResource(R.drawable.ic_pause_black_48dp);
             recording.play(0);
         }
@@ -422,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
     @Override
-    public void playback(final int bytesread) {
+    public void playback(final int bytesread, final byte[] playedBytes) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -430,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 seekBar.setProgress((int) (currentTime));
                 String currentTimeString = formatTime(currentTime);
                 playbackTime.setText(currentTimeString);
+                mVisualizerView.updateVisualizer(playedBytes);
             }
         });
     }

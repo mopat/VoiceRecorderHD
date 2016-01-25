@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,6 +34,12 @@ public class Recording {
     private List<PlayListener> playListener = new ArrayList<>();
     private List<StopListener> stopListener = new ArrayList<>();
 
+    public void pause() {
+        playbackPaused();
+    }
+
+    private byte[] resetBytes;
+
     public Recording(String filePath, int samplerate, Context context) {
         this.context = context;
         am = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
@@ -42,15 +49,16 @@ public class Recording {
         this.byteData = new byte[fileSize];
         this.state = 0;
         this.samplerate = samplerate;
+
+        resetBytes = new byte[1024];
+        Arrays.fill(resetBytes, (byte) 0);
     }
 
     public void stop() {
         playbackStop();
     }
 
-    public void pause() {
-        playbackPaused();
-    }
+
 
     public void play(final double skip) {
         new Thread(new Runnable() {
@@ -108,7 +116,7 @@ public class Recording {
                                 System.arraycopy(byteData, 0, readBytes, 0, readBytes.length);
                                 bytesread += ret;
                                 lastPlayed = bytesread;
-                                playback(bytesread);
+                                playback(bytesread, readBytes);
 
                                 //Log.d("BYTESREAD", String.valueOf(bytesread));
                             } else {
@@ -116,7 +124,7 @@ public class Recording {
                                 break;
                             }
                         } else if (state == 2) {
-                            playback(lastPlayed);
+                            playback(lastPlayed, resetBytes);
                             playbackPaused();
                             break;
                         } else if (state == 0) {
@@ -182,9 +190,9 @@ public class Recording {
         playbackListener.add(listener);
     }
 
-    private void playback(int bytesread) {
+    private void playback(int bytesread, byte[] playedBytes) {
         for (PlaybackListener listener : playbackListener) {
-            listener.playback(bytesread);
+            listener.playback(bytesread, playedBytes);
         }
     }
     //endregion
@@ -234,7 +242,7 @@ public class Recording {
     }
 
     private void playbackStop() {
-        playback(0);
+        playback(0, resetBytes);
         state = 0;
         lastPlayed = 0;
         for (StopListener listener : stopListener) {

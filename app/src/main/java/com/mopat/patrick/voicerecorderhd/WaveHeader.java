@@ -19,6 +19,7 @@ package com.mopat.patrick.voicerecorderhd;
  * limitations under the License.
  */
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -199,7 +200,7 @@ public class WaveHeader {
      * @return number of bytes consumed.
      * @throws IOException
      */
-    public int read(InputStream in) throws IOException {
+    public int read(FileInputStream in) throws IOException {
         /* RIFF header */
         readId(in, "RIFF");
         int numBytes = readInt(in) - 36;

@@ -292,8 +292,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         if (getIntent().hasExtra("filepath")) {
             String filePath = getIntent().getStringExtra("filepath");
             String filename = getIntent().getStringExtra("filename");
-            //String samplerate = getIntent().getStringExtra("samplerate");
-            String samplerate = "44100";
+            String samplerate = getIntent().getStringExtra("samplerate");
             initRecording(filePath, filename, Integer.parseInt(samplerate));
             seekBar.setMax(recording.getDurationInMs());
             samplerateSpinner.setSelection(getSpinnerIndex(samplerate));

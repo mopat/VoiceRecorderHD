@@ -145,11 +145,8 @@ public class Recorder {
         for (int j = 0; j < getHeader().length; j++) {
             bytesList.add(getHeader()[j]);
         }
-        Byte[] byties;
         while (isRecording) {
-
             if (state == 1) {
-                Log.d("RECORDING", "RECORDING");
                 recorder.read(sData, 0, BufferElements2Rec);
 
                 byte bData[] = short2byte(sData);
@@ -165,16 +162,16 @@ public class Recorder {
             } else if (state == 2) {
             }
         }
+        //write header first
         try {
-
-
-            byties = bytesList.toArray(new Byte[bytesList.size()]);
-            Log.d("BYTIEs", String.valueOf(byties.length));
-            try {
-                os.write(getHeader(), 0, getHeader().length);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            os.write(getHeader(), 0, getHeader().length);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //write bytes
+        try {
+            //
+            Byte[] byties = bytesList.toArray(new Byte[bytesList.size()]);
             os.write(toByte(byties));
             os.close();
         } catch (IOException e) {

@@ -26,7 +26,10 @@ import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,8 +79,12 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 String filename = (String) filenameTextView.getText();
                 String filePath = Absolutes.DIRECTORY + "/" + filename;
                 Log.d("FILENAME", Absolutes.DIRECTORY + "/" + filename);
+                //String samplerate =  getSampleRate(filePath);
+
+                String samplerate = getFileSamplerate(filePath);
+                Log.d("samplerate", samplerate);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
-                i.putExtra("filename", filename).putExtra("filepath", filePath).putExtra("samplerate", getSampleRate(filePath));
+                i.putExtra("filename", filename).putExtra("filepath", filePath).putExtra("samplerate", samplerate);
                 startActivity(i);
             }
         });
@@ -128,6 +135,22 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private String getFileSamplerate(String filepath) {
+        FileInputStream in = null;
+        WaveHeader waveHeader = new WaveHeader();
+        try {
+            in = new FileInputStream(filepath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            waveHeader.read(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return String.valueOf(waveHeader.getSampleRate());
     }
 
     private void showDeleteDialog(String filename) {
@@ -216,14 +239,27 @@ public class MyRecordingsActivity extends AppCompatActivity {
             }
 */
             // IMusicMetadata metadata = srcSet.getSimplified();
-            String samplerate = "44100";
+
             String filename = file[i].getName();
+            WaveHeader waveHeader = new WaveHeader();
+            FileInputStream in = null;
+            try {
+                in = new FileInputStream(Absolutes.DIRECTORY + "/" + filename);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                waveHeader.read(in);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String samplerate = String.valueOf(waveHeader.getSampleRate());
             String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
             String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
             String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
                     new Date(file[i].lastModified())
             );
-
+            // Log.d("SAMPLERATE", samplerate);
             Log.d("Files", "FileName:" + file[i].getName());
             myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
         }

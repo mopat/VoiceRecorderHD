@@ -355,7 +355,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onStartTrackingTouch(SeekBar seekBar) {
                 if (recording != null && recording.getState() == 1) {
                     recording.pause();
-                    //recording.play(lastPlayedBytes * 2);
                 }
             }
 
@@ -364,6 +363,20 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (recording != null && recording.getState() != 0)
+            recording.stop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (recording != null && recording.getState() != 0)
+            recording.pause();
     }
 
     @Override

@@ -75,7 +75,9 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 String samplerate = getFileSamplerate(filePath);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
                 i.putExtra("filename", filename).putExtra("filepath", filePath).putExtra("samplerate", samplerate);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
+                overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
             }
         });
         myRecordingsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

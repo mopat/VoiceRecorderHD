@@ -50,7 +50,6 @@ public class Recording {
 
     public void pause() {
         playbackPaused();
-        Log.d("LASTPLAYED", String.valueOf(lastPlayed));
     }
 
     public void play(final double skip) {
@@ -81,13 +80,10 @@ public class Recording {
                     e.printStackTrace();
                 }
                 int toSkip = skipToNumberOfBytes(skip);
-
-                // toSkip = (toSkip % 2 != 0 ? toSkip-- : toSkip);
                 if (toSkip % 2 != 0)
                     toSkip--;
                 int bytesread = toSkip, ret = 0;
 
-                Log.d("SKIP", String.valueOf(toSkip));
                 try {
                     in.skip((toSkip));
                 } catch (IOException e) {
@@ -174,16 +170,6 @@ public class Recording {
 
     private int skipToNumberOfBytes(double skip) {
         return (int) (skip / 1000 * Config.sampleRate);
-    }
-
-    public String getFormattedFileSize() {
-        int length = (int) (Math.log10(fileSize) + 1);
-        if (length > 6)
-            return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "MB") + "\n " + "Samplerate: " + String.valueOf(samplerate) + "Hz";
-        else if (length > 3 && length < 7)
-            return String.valueOf(fileSize / 1000 + "KB") + "\n " + "Samplerate: " + String.valueOf(samplerate) + "Hz";
-
-        return "NaN";
     }
 
     private double twoDecimals(double num) {

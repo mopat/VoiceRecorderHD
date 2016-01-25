@@ -41,7 +41,6 @@ public class Recorder {
     private Thread recordingThread, stopRecordingThread = null;
     private boolean isRecording = false;
     private String recordingPath = null, recordingFilename = null;
-    long recordTime, st;
     private int filesize;
     int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
             RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
@@ -108,14 +107,6 @@ public class Recorder {
         } catch (ID3WriteException e) {
             e.printStackTrace();
         }
-    }
-
-    private String formatTime(double timeInMs) {
-        return String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
-                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
-                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
-        );
     }
 
     private void writeAudioDataToFile() {
@@ -190,15 +181,13 @@ public class Recorder {
 
     private byte[] getHeader() {
 
-        long totalAudioLen = 0;
-        long totalDataLen = totalAudioLen + 36;
         long longSampleRate = Config.sampleRate;
         int channels = 1;
-        long byteRate = 256;
+        long byteRate = 192;
 
         //Stops playback at totalAudioLen
-        totalAudioLen = filesize;
-        totalDataLen = totalAudioLen + 36;
+        int totalAudioLen = filesize;
+        int totalDataLen = totalAudioLen + 36;
         byte[] header = new byte[44];
 
         header[0] = (byte) 'R'; // RIFF/WAVE header
@@ -297,8 +286,6 @@ public class Recorder {
                     recordingThread = null;
                     state = 0;
                 }
-                recordTime = System.currentTimeMillis() - st;
-                Log.d("RECORDTIME", String.valueOf(recordTime));
                 stopRecordingThread = null;
             }
         });

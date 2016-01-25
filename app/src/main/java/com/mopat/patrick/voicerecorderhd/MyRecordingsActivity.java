@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,7 +81,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 //String samplerate =  getSampleRate(filePath);
 
                 String samplerate = getFileSamplerate(filePath);
-                Log.d("samplerate", samplerate);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
                 i.putExtra("filename", filename).putExtra("filepath", filePath).putExtra("samplerate", samplerate);
                 startActivity(i);

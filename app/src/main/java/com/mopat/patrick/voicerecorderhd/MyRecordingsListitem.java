@@ -39,7 +39,6 @@ public class MyRecordingsListitem {
     }
 
     public void setChecked(boolean checked) {
-        Log.d("CHECKED", String.valueOf(checked));
         this.checked = checked;
     }
 

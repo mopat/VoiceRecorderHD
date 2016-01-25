@@ -8,6 +8,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.text.Editable;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -126,32 +128,128 @@ public class Recorder {
         short sData[] = new short[BufferElements2Rec];
         recordingPath = recording.getAbsolutePath();
         FileOutputStream os = null;
+
         try {
             os = new FileOutputStream(recordingPath);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
         state = 1;
+  /*     try {
+            os.write(getHeader(), 0, getHeader().length);
+        } catch (IOException e) {
+            e.printStackTrace();
+        */
+        ArrayList<Byte> bytesList = new ArrayList<>();
+        for (int j = 0; j < getHeader().length; j++) {
+            bytesList.add(getHeader()[j]);
+        }
+        Byte[] byties;
         while (isRecording) {
 
             if (state == 1) {
                 Log.d("RECORDING", "RECORDING");
                 recorder.read(sData, 0, BufferElements2Rec);
-                try {
-                    byte bData[] = short2byte(sData);
-//concat(bData);
-                    os.write(bData, 0, BufferElements2Rec * BytesPerElement);
-                    written += bData.length;
 
-                    triggerWrittenBytes(written, bData);
-                    filesize = written;
-                } catch (IOException e) {
-                    e.printStackTrace();
+                byte bData[] = short2byte(sData);
+                for (int i = 0; i < bData.length; i++) {
+                    bytesList.add(bData[i]);
                 }
+//concat(bData);
+                //os.write(bData, 0, BufferElements2Rec * BytesPerElement);
+                written += bData.length;
+
+                triggerWrittenBytes(written, bData);
+                filesize = written;
             } else if (state == 2) {
             }
         }
-        setMetadata();
+        try {
+
+
+            byties = bytesList.toArray(new Byte[bytesList.size()]);
+            Log.d("BYTIEs", String.valueOf(byties.length));
+            try {
+                os.write(getHeader(), 0, getHeader().length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            os.write(toByte(byties));
+            os.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //setMetadata();
+    }
+
+    private byte[] toByte(Byte[] B) {
+        byte[] b2 = new byte[B.length];
+        for (int i = 0; i < B.length; i++) {
+            b2[i] = B[i];
+        }
+        return b2;
+    }
+
+    private byte[] getHeader() {
+
+        long totalAudioLen = 0;
+        long totalDataLen = totalAudioLen + 36;
+        long longSampleRate = Config.sampleRate;
+        int channels = 1;
+        long byteRate = 256;
+
+        //Stops playback at totalAudioLen
+        totalAudioLen = filesize;
+        totalDataLen = totalAudioLen + 36;
+        byte[] header = new byte[44];
+
+        header[0] = (byte) 'R'; // RIFF/WAVE header
+        header[1] = (byte) 'I';
+        header[2] = (byte) 'F';
+        header[3] = (byte) 'F';
+        header[4] = (byte) (totalDataLen & 0xff);
+        header[5] = (byte) ((totalDataLen >> 8) & 0xff);
+        header[6] = (byte) ((totalDataLen >> 16) & 0xff);
+        header[7] = (byte) ((totalDataLen >> 24) & 0xff);
+        header[8] = (byte) 'W';
+        header[9] = (byte) 'A';
+        header[10] = (byte) 'V';
+        header[11] = (byte) 'E';
+        header[12] = (byte) 'f'; // 'fmt ' chunk
+        header[13] = (byte) 'm';
+        header[14] = (byte) 't';
+        header[15] = (byte) ' ';
+        header[16] = 16; // 4 bytes: size of 'fmt ' chunk
+        header[17] = 0;
+        header[18] = 0;
+        header[19] = 0;
+        header[20] = 1; // format = 1
+        header[21] = 0;
+        header[22] = (byte) channels;
+        header[23] = 0;
+        header[24] = (byte) (longSampleRate & 0xff);
+        header[25] = (byte) ((longSampleRate >> 8) & 0xff);
+        header[26] = (byte) ((longSampleRate >> 16) & 0xff);
+        header[27] = (byte) ((longSampleRate >> 24) & 0xff);
+        header[28] = (byte) (byteRate & 0xff);
+        header[29] = (byte) ((byteRate >> 8) & 0xff);
+        header[30] = (byte) ((byteRate >> 16) & 0xff);
+        header[31] = (byte) ((byteRate >> 24) & 0xff);
+        header[32] = (byte) (2 * 16 / 8); // block align
+        header[33] = 0;
+        header[34] = 16; // bits per sample
+        header[35] = 0;
+        header[36] = (byte) 'd';
+        header[37] = (byte) 'a';
+        header[38] = (byte) 't';
+        header[39] = (byte) 'a';
+        header[40] = (byte) (totalAudioLen & 0xff);
+        header[41] = (byte) ((totalAudioLen >> 8) & 0xff);
+        header[42] = (byte) ((totalAudioLen >> 16) & 0xff);
+        header[43] = (byte) ((totalAudioLen >> 24) & 0xff);
+
+        return header;
     }
 
     byte[] allBytes = new byte[0];

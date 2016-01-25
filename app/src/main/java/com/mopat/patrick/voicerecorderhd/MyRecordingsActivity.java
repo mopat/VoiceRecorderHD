@@ -207,23 +207,23 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
         Log.d("Files", "Size: " + file.length);
         for (int i = 0; i < file.length; i++) {
-            MusicMetadataSet srcSet = null;
+      /*      MusicMetadataSet srcSet = null;
             try {
                 srcSet = new MyID3().read(file[i]);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            IMusicMetadata metadata = srcSet.getSimplified();
-            String samplerate = metadata.getComment();
+*/
+            // IMusicMetadata metadata = srcSet.getSimplified();
+            String samplerate = "44100";
             String filename = file[i].getName();
             String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
             String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
             String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
                     new Date(file[i].lastModified())
             );
-            ;
+
             Log.d("Files", "FileName:" + file[i].getName());
             myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
         }

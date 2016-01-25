@@ -7,6 +7,6 @@ import java.util.ArrayList;
  */
 public class Config {
     public static int sampleRate = 44100;
-    public static String filetype = ".mp3";
+    public static String filetype = ".wav";
     public String[] samplerates = new String[]{"44100", "16000"};
 }

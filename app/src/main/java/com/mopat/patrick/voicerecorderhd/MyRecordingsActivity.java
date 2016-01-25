@@ -14,16 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.cmc.music.metadata.IMusicMetadata;
-import org.cmc.music.metadata.MusicMetadataSet;
-import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +34,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
     private Menu menu;
     private boolean allSelected = false, selectionMode = false;
-    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +71,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 String filename = (String) filenameTextView.getText();
                 String filePath = Absolutes.DIRECTORY + "/" + filename;
                 Log.d("FILENAME", Absolutes.DIRECTORY + "/" + filename);
-                //String samplerate =  getSampleRate(filePath);
 
                 String samplerate = getFileSamplerate(filePath);
                 Intent i = new Intent(MyRecordingsActivity.this, MainActivity.class);
@@ -197,21 +189,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "File renaming not possible", Toast.LENGTH_LONG).show();
     }
 
-    private String getSampleRate(String filepath) {
-        File src = new File(filepath);
-        MusicMetadataSet srcSet = null;
-        try {
-            srcSet = new MyID3().read(src);
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } // read metadata
-
-        IMusicMetadata metadata = srcSet.getSimplified();
-
-        return metadata.getComment();
-    }
-
     private String formatTime(double timeInMs) {
         return String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
@@ -222,22 +199,10 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
     private void displayMyRecordings() {
         String path = Absolutes.DIRECTORY.toString();
-        Log.d("Files", "Path: " + path);
         File f = new File(path);
         File file[] = f.listFiles();
 
-        Log.d("Files", "Size: " + file.length);
         for (int i = 0; i < file.length; i++) {
-      /*      MusicMetadataSet srcSet = null;
-            try {
-                srcSet = new MyID3().read(file[i]);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-*/
-            // IMusicMetadata metadata = srcSet.getSimplified();
-
             String filename = file[i].getName();
             WaveHeader waveHeader = new WaveHeader();
             FileInputStream in = null;
@@ -257,7 +222,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
                     new Date(file[i].lastModified())
             );
-            // Log.d("SAMPLERATE", samplerate);
             Log.d("Files", "FileName:" + file[i].getName());
             myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
         }
@@ -316,7 +280,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
                 String filename = myRecordingsArrayAdapter.getItem(i).getName();
                 String filePath = Absolutes.DIRECTORY + "/" + filename;
-                final File file = new File(filePath);
                 Uri fileUri = Uri.parse(filePath);
                 fileUris.add(fileUri);
             }
@@ -383,7 +346,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
             selectUnselectAll();
             hideCheckBoxes();
             selectionMode = false;
-        } else super.onBackPressed();
+        } else {
+            super.onBackPressed();
+            finish();
+            overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+        }
     }
 
     private void hideCheckBoxes() {

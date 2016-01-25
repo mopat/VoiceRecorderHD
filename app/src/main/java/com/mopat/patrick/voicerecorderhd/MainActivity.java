@@ -9,21 +9,15 @@ import android.content.res.Resources;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -31,7 +25,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private VisualizerView mVisualizerView;
     private Visualizer mVisualizer;
     private byte[] resetBytes;
-    private boolean isRecordingAllowed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
         resetBytes = new byte[1024];
         Arrays.fill(resetBytes, (byte) 0);
-
-        isRecordingAllowed = true;
 
         setupVisualizerFxAndUI();
 
@@ -211,7 +201,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, MyRecordingsActivity.class);
+                if (recording != null && recording.getState() != 0)
+                    recording.stop();
                 startActivity(i);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
             }
         });
         pauseRecordingButton.setOnClickListener(new View.OnClickListener() {

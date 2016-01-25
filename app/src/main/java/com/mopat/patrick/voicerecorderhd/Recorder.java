@@ -12,11 +12,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;
 
-import org.cmc.music.common.ID3WriteException;
-import org.cmc.music.metadata.MusicMetadata;
-import org.cmc.music.metadata.MusicMetadataSet;
-import org.cmc.music.myid3.MyID3;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -81,29 +76,6 @@ public class Recorder {
         return bytes;
     }
 
-    private void setMetadata() {
-        MusicMetadataSet srcSet = null;
-        try {
-            srcSet = new MyID3().read(recording);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        MusicMetadata musicMetadata = new MusicMetadata("name");
-        musicMetadata.setArtist(context.getResources().getString(R.string.app_name));
-        int durationSeconds = filesize / (Config.sampleRate * 2);
-        Log.d("dur", String.valueOf(durationSeconds));
-        //musicMetadata.setDurationSeconds(String.valueOf(durationSeconds));
-        musicMetadata.setComment(String.valueOf(Config.sampleRate));
-
-        try {
-            new MyID3().update(recording, srcSet, musicMetadata);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ID3WriteException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void writeAudioDataToFile() {
         // Write the output audio in byte
         int numOfFilesInDirectory = Absolutes.DIRECTORY.list().length;
@@ -145,10 +117,10 @@ public class Recorder {
 
                 triggerWrittenBytes(written, bData);
                 filesize = written;
-            } else if (state == 2) {
             }
         }
         //write header first
+
         try {
             os.write(getHeader(), 0, getHeader().length);
         } catch (IOException e) {
@@ -163,7 +135,6 @@ public class Recorder {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //setMetadata();
     }
 
     private byte[] toByte(Byte[] B) {

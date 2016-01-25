@@ -108,8 +108,8 @@ public class Recorder {
                 recorder.read(sData, 0, BufferElements2Rec);
 
                 byte bData[] = short2byte(sData);
-                for (int i = 0; i < bData.length; i++) {
-                    bytesList.add(bData[i]);
+                for (byte b : bData) {
+                    bytesList.add(b);
                 }
 //concat(bData);
                 //os.write(bData, 0, BufferElements2Rec * BytesPerElement);

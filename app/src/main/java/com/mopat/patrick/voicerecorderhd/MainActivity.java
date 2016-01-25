@@ -383,10 +383,17 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         if (recording != null && recording.getState() != 0) {
             recording.pause();
         } else if (recorder != null && recorder.isRecording()) {
-            recorder.pause();
-            pauseRecordingButton.setBackgroundResource(R.drawable.continue_rec);
+            recorder.stopRecording();
             recordButton.clearAnimation();
             mVisualizer.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (recorder != null && recorder.isRecording()) {
+            recorder.stopRecording();
         }
     }
 

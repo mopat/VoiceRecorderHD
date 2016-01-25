@@ -386,7 +386,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 // User chose the "Settings" item, show the app settings UI...
                 return true;
             case R.id.action_delete_main:
-                showDeleteDialog();
+                if (recording != null)
+                    showDeleteDialog();
+                else
+                    Toast.makeText(getApplicationContext(), "No Recording", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_share_main:
                 if (recording != null) {
@@ -396,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
                     startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 } else
-                    Toast.makeText(getApplicationContext(), "No Recording", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No Recording", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 // If we got here, the user's action was not recognized.

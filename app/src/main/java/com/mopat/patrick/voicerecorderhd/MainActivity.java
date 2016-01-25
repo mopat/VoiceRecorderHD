@@ -369,16 +369,25 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (recording != null && recording.getState() != 0)
+        if (recording != null && recording.getState() != 0) {
             recording.stop();
+            super.onBackPressed();
+        } else if (recorder != null && recorder.isRecording()) {
+            Toast.makeText(getApplicationContext(), "Stop recording to exit", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (recording != null && recording.getState() != 0)
+        if (recording != null && recording.getState() != 0) {
             recording.pause();
+        } else if (recorder != null && recorder.isRecording()) {
+            recorder.pause();
+            pauseRecordingButton.setBackgroundResource(R.drawable.continue_rec);
+            recordButton.clearAnimation();
+            mVisualizer.setEnabled(false);
+        }
     }
 
     @Override

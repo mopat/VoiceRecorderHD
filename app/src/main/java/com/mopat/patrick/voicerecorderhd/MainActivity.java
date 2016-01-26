@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 mVisualizerView.updateVisualizer(resetBytes);
                 recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+                cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 resetViews();
                 Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+                cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
             }
         });
         saveRecordingDialog.show();
@@ -162,12 +164,14 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     disableViews();
                     resetViews();
                     pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+                    cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp);
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();
                     mVisualizer.setEnabled(false);
                     recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
                     pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+                    cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
                     recordButton.clearAnimation();
                     enableViews();
                 }
@@ -219,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     recorder.continueRecording();
                     setRecAnimation();
                     pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+                    cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp);
                 }
             }
         });
@@ -262,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 resetViews();
                 recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+
                 recordButton.clearAnimation();
                 enableViews();
             }
@@ -348,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         mVisualizerView.updateVisualizer(resetBytes);
         filesizeTextView.setText("");
         pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+        cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
     }
 
     private void disableViews() {

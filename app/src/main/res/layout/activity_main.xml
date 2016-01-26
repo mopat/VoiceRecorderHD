@@ -53,12 +53,13 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/ic_mic_black_48dp" />
 
     <LinearLayout
-        android:layout_width="100dp"
+        android:layout_width="110dp"
         android:layout_height="70dp"
+        android:paddingTop="6dp"
         android:orientation="horizontal"
         android:layout_gravity="center">
 
@@ -74,9 +75,10 @@
             android:id="@+id/cancel_recording_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:background="@drawable/ic_close_black_48dp" />
+            android:background="@drawable/ic_close_circle_filled_black_48dp_disabled" />
     </LinearLayout>
 
 

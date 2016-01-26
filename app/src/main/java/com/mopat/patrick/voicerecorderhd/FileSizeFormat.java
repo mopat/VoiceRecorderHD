@@ -12,7 +12,7 @@ public class FileSizeFormat {
         else if (length > 3 && length < 7)
             return String.valueOf(fileSize / 1000 + "KB") + "\n " + "Samplerate: " + String.valueOf(Config.sampleRate) + "Hz";
 
-        return "NaN";
+        return "00:00:00";
     }
 
     private static double twoDecimals(double num) {
@@ -26,7 +26,7 @@ public class FileSizeFormat {
         else if (length > 3 && length < 7)
             return String.valueOf(fileSize / 1000 + "KB");
 
-        return "NaN";
+        return "00:00:00";
     }
 
 }

@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
-    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton;
+    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         stopButton = (ImageButton) findViewById(R.id.stop_button);
         pauseRecordingButton = (ImageButton) findViewById(R.id.pause_recording_button);
         myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
+        cancelRecordingbutton = (ImageButton) findViewById(R.id.cancel_recording_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
@@ -221,7 +222,14 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 }
             }
         });
-
+        cancelRecordingbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (recorder.isRecording()) {
+                    showCancelDialog();
+                }
+            }
+        });
         samplerateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -241,6 +249,26 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         });
     }
 
+    private void showCancelDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+        adb.setTitle("Cancel Recording");
+        adb.setMessage("Are you sure you want to cancel current recording?");
+        adb.setNegativeButton("No", null);
+        adb.setPositiveButton("Yes", new AlertDialog.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                recorder.cancelRecording();
+                mVisualizer.setEnabled(false);
+                recording = null;
+                resetViews();
+                recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
+                pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+                recordButton.clearAnimation();
+                enableViews();
+            }
+        });
+        adb.show();
+    }
+
     private void showDeleteDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
         adb.setTitle("Delete?");
@@ -252,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 Toast.makeText(getApplicationContext(), "File deleted", Toast.LENGTH_LONG).show();
                 recording = null;
                 resetViews();
+                durationTime.setText(formatTime(0.0));
             }
         });
         adb.show();
@@ -508,9 +537,14 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void run() {
                 mVisualizerView.updateVisualizer(bytes);
                 double currentTime = byteToInt(recordedBytes);
-                String currentTimeString = formatTime(currentTime);
-                recordDurationTextView.setText(currentTimeString);
-                filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recordedBytes));
+                if (recordedBytes == 0) {
+                    recordDurationTextView.setText("00:00:00");
+                    filesizeTextView.setText("");
+                } else {
+                    String currentTimeString = formatTime(currentTime);
+                    recordDurationTextView.setText(currentTimeString);
+                    filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recordedBytes));
+                }
             }
         });
     }

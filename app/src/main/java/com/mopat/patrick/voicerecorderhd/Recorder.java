@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -41,9 +42,11 @@ public class Recorder {
     int BufferElements2Rec = 512 / 2; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
     private File recording;
+    private byte[] resetBytes = new byte[1024];
 
     public Recorder(Context context) {
         this.context = context;
+        Arrays.fill(resetBytes, (byte) 0);
     }
 
     public void startRecording() {
@@ -251,11 +254,19 @@ public class Recorder {
                     recorder = null;
                     recordingThread = null;
                     state = 0;
+                    triggerWrittenBytes(0, resetBytes);
                 }
                 stopRecordingThread = null;
             }
         });
         stopRecordingThread.start();
+    }
+
+
+    public void cancelRecording() {
+        state = 0;
+        stopRecording();
+        deleteFile();
     }
 
     public boolean isRecording() {

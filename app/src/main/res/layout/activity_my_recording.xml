@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    android:scaleType="centerCrop"
     android:fitsSystemWindows="true"
+    android:scaleType="centerCrop"
     tools:context=".MyRecordingsActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -24,6 +24,13 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_my_recording" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:entries="@array/sortings_array">
+
+    </Spinner>
 
     <ListView
         android:id="@+id/my_recordings_listview"

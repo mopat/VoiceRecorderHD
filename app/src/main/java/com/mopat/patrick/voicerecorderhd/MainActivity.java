@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 String filename = filenameEditText.getText().toString();
                 if (filename.indexOf(".") > 0) {
                     filename = filename.replace(".", "_");
-
                 }
                 filename = filename.replaceAll("\\s", "");
                 dialog.dismiss();

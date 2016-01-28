@@ -3,8 +3,10 @@ package com.mopat.patrick.voicerecorderhd;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Path;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +27,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -229,13 +233,25 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 }
                 String samplerate = String.valueOf(waveHeader.getSampleRate());
                 String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+                Log.d("MODIFIED", String.valueOf(new Date(file[i].lastModified())));
                 String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
                 String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
                         new Date(file[i].lastModified())
                 );
+
                 Log.d("Files", "FileName:" + file[i].getName());
                 myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
             }
+            Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
+                public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
+                    return m1.getModifiedDate().compareTo(m2.getModifiedDate());
+                }
+            });
+         /*   Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
+                public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
+                    return m1.getName().compareTo(m2.getName());
+                }
+            });*/
             myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
 
             myRecordingsListView.setAdapter(myRecordingsArrayAdapter);

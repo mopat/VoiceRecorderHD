@@ -14,4 +14,8 @@
         <item>11000</item>
         <item>8000</item>
     </string-array>
+
+    <string-array name="sortings_array">
+
+    </string-array>
 </resources>

@@ -169,12 +169,14 @@ public class MyRecordingsActivity extends AppCompatActivity {
         final EditText filenameEditText = new EditText(MyRecordingsActivity.this);
         filenameEditText.setHint("Filename");
         adb.setView(filenameEditText);
-        filenameEditText.setText(filename);
+
+        final String cuttedFilename = filename.substring(0, filename.length() - 4);
+        filenameEditText.setText(cuttedFilename);
         adb.setNegativeButton("Cancel", null);
         adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 String newfilename = filenameEditText.getText().toString();
-                renameFile(filename, newfilename);
+                renameFile(cuttedFilename, newfilename);
                 myRecordings.clear();
                 displayMyRecordings();
             }
@@ -183,8 +185,8 @@ public class MyRecordingsActivity extends AppCompatActivity {
     }
 
     public void renameFile(String filename, String newFilename) {
-        File from = new File(Absolutes.DIRECTORY, filename);
-        File to = new File(Absolutes.DIRECTORY, newFilename);
+        File from = new File(Absolutes.DIRECTORY, filename + Config.filetype);
+        File to = new File(Absolutes.DIRECTORY, newFilename + Config.filetype);
         if (from.renameTo(to))
             Toast.makeText(getApplicationContext(), "File renamed", Toast.LENGTH_LONG).show();
         else

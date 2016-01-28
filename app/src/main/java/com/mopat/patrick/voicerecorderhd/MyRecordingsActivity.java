@@ -176,6 +176,10 @@ public class MyRecordingsActivity extends AppCompatActivity {
         adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 String newfilename = filenameEditText.getText().toString();
+                if (newfilename.indexOf(".") > 0) {
+                    newfilename = newfilename.replace(".", "_");
+                }
+                newfilename = newfilename.replaceAll("\\s", "");
                 renameFile(cuttedFilename, newfilename);
                 myRecordings.clear();
                 displayMyRecordings();
@@ -207,33 +211,37 @@ public class MyRecordingsActivity extends AppCompatActivity {
         File file[] = f.listFiles();
 
         for (int i = 0; i < file.length; i++) {
+            Log.d("fileending", file[i].getName().substring(file[i].getName().length() - 3, file[i].getName().length()));
             String filename = file[i].getName();
-            WaveHeader waveHeader = new WaveHeader();
-            FileInputStream in = null;
-            try {
-                in = new FileInputStream(Absolutes.DIRECTORY + "/" + filename);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            String fileEnding = filename.substring(filename.length() - 4, filename.length());
+            if (fileEnding.equals(Config.filetype)) {
+                WaveHeader waveHeader = new WaveHeader();
+                FileInputStream in = null;
+                try {
+                    in = new FileInputStream(Absolutes.DIRECTORY + "/" + filename);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    waveHeader.read(in);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String samplerate = String.valueOf(waveHeader.getSampleRate());
+                String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+                String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
+                String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
+                        new Date(file[i].lastModified())
+                );
+                Log.d("Files", "FileName:" + file[i].getName());
+                myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
             }
-            try {
-                waveHeader.read(in);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String samplerate = String.valueOf(waveHeader.getSampleRate());
-            String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
-            String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
-            String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
-                    new Date(file[i].lastModified())
-            );
-            Log.d("Files", "FileName:" + file[i].getName());
-            myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
-        }
-        myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
+            myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
 
-        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
-        myRecordingsArrayAdapter.notifyDataSetChanged();
-        Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
+            myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+            myRecordingsArrayAdapter.notifyDataSetChanged();
+            Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
+        }
     }
 
     @Override

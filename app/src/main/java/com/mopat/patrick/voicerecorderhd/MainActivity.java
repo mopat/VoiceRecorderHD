@@ -121,6 +121,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 String filename = filenameEditText.getText().toString();
+                if (filename.indexOf(".") > 0) {
+                    filename = filename.replace(".", "_");
+
+                }
+                filename = filename.replaceAll("\\s", "");
+                dialog.dismiss();
                 recorder.renameFile(filename);
                 initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
                 Toast.makeText(getApplicationContext(), "File stored at " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
@@ -128,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
+
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

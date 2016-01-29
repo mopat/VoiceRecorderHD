@@ -442,9 +442,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+/*            case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
-                return true;
+                return true;*/
             case R.id.action_delete_main:
                 if (recording != null)
                     showDeleteDialog();

@@ -35,7 +35,7 @@ public class VisualizerView extends View {
         mBytes = null;
         mForePaint.setStrokeWidth(1f);
         mForePaint.setAntiAlias(true);
-        mForePaint.setColor(Color.rgb(0, 128, 255));
+        mForePaint.setColor(Color.rgb(22, 175, 186));
     }
 
     public void updateVisualizer(byte[] bytes) {

@@ -38,6 +38,13 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
     private Menu menu;
     private boolean allSelected = false, selectionMode = false;
+    /*
+    Sort: 1 -> new  ->old
+    Sort: 2 -> old  ->new
+    Sort: 3 -> alphabet desc
+    Sort: 4 -> alphabet asc
+    Sort: 1 -> new  ->old
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,10 +251,22 @@ public class MyRecordingsActivity extends AppCompatActivity {
             }
             Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
                 public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
+                    switch (Config.sorting) {
+                        case 1:
+                            return m1.getModifiedDate().compareTo(m2.getModifiedDate());
+                        case 2:
+                            return m2.getModifiedDate().compareTo(m1.getModifiedDate());
+                        case 3:
+                            return m1.getName().compareTo(m2.getName());
+                        case 4:
+                            return m2.getName().compareTo(m1.getName());
+                        case 5:
+                            return m1.getFilesize().compareTo(m2.getFilesize());
+                    }
                     return m1.getModifiedDate().compareTo(m2.getModifiedDate());
                 }
             });
-         /*   Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
+      /*     Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
                 public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
                     return m1.getName().compareTo(m2.getName());
                 }
@@ -293,6 +312,31 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 sharingIntent.setType("audio/*");
                 sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, getSelectedItems());
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                return true;
+            case R.id.sort_newest:
+                Config.sorting = 1;
+                myRecordings.clear();
+                displayMyRecordings();
+                return true;
+            case R.id.sort_oldest:
+                Config.sorting = 2;
+                myRecordings.clear();
+                displayMyRecordings();
+                return true;
+            case R.id.alph_down:
+                Config.sorting = 3;
+                myRecordings.clear();
+                displayMyRecordings();
+                return true;
+            case R.id.alph_up:
+                Config.sorting = 4;
+                myRecordings.clear();
+                displayMyRecordings();
+                return true;
+            case R.id.size:
+                Config.sorting = 5;
+                myRecordings.clear();
+                displayMyRecordings();
                 return true;
             default:
                 // If we got here, the user's action was not recognized.

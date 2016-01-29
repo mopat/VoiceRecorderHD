@@ -10,6 +10,29 @@
 
     <group android:id="@+id/main_menu_group">
         <item
+            android:id="@+id/sort_ab"
+            android:icon="@drawable/ic_sort_white_48dp"
+            android:title="Sort"
+            app:showAsAction="ifRoom">
+            <menu>
+                <item
+                    android:id="@+id/sort_newest"
+                    android:title="Newest" />
+                <item
+                    android:id="@+id/sort_oldest"
+                    android:title="Oldest" />
+                <item
+                    android:id="@+id/alph_down"
+                    android:title="Name Desecending" />
+                <item
+                    android:id="@+id/alph_up"
+                    android:title="Name Ascending" />
+                <item
+                    android:id="@+id/size"
+                    android:title="Size" />
+            </menu>
+        </item>
+        <item
             android:id="@+id/action_multiselect"
             android:icon="@drawable/ic_check_box_white_24dp"
             android:title="yoo"
@@ -19,11 +42,11 @@
     <group
         android:id="@+id/delete_select_share_group"
         android:visible="false">
-    <!--    <item
-            android:id="@+id/close_selection_mode"
-            android:icon="@drawable/ic_close_white_48dp"
-            android:title="yoo"
-            app:showAsAction="ifRoom" />-->
+        <!--    <item
+                android:id="@+id/close_selection_mode"
+                android:icon="@drawable/ic_close_white_48dp"
+                android:title="yoo"
+                app:showAsAction="ifRoom" />-->
         <item
             android:id="@+id/select_unselect_all"
             android:icon="@drawable/ic_check_white_48dp"

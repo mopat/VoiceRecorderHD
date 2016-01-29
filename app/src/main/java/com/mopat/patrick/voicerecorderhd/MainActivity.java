@@ -301,7 +301,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void initRecording(String filePath, String filename, int samplerate) {
         recording = new Recording(filePath, samplerate, MainActivity.this);
         filenameTextView.setText(filename);
-        Log.d("filesize", String.valueOf(recording.getFileSize()));
         recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
         filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recording.getFileSize()));
         durationTime.setText(formatTime(recording.getDurationInMs()));
@@ -469,14 +468,15 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         }
     }
 
-    private double byteToInt(int bytesread) {
-        return (bytesread * 1000) / (Config.sampleRate * 2);
+    private long byteToInt(int bytesread) {
+        return ((long) bytesread * 1000) / (Config.sampleRate * 2);
     }
 
     private String formatTime(double timeInMs) {
+
         return String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
-                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
+                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) - TimeUnit.MILLISECONDS.toMinutes((int) timeInMs) * 60,
                 (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
         );
     }

@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 initRecording(recorder.getFilePath(), recorder.getRecordingFilename() + Config.filetype, recorder.getSamplerate());
                 Toast.makeText(getApplicationContext(), "File stored at " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
                 mVisualizerView.updateVisualizer(resetBytes);
-                Log.d("DURATION", String.valueOf(recording.getDurationInMs()));
+                filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recording.getFileSize()));
                 recordDurationTextView.setText(TimeFormat.formatTime(recording.getDurationInMs()));
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);

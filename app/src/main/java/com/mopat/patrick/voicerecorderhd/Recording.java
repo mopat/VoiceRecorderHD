@@ -97,7 +97,7 @@ public class Recording {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                byte[] byties = invert(byteData);
+                // byte[] byties = invert(byteData);
                 if (state != 1) {
                     state = 1;
                     while (bytesread <= fileSize) {
@@ -173,9 +173,8 @@ public class Recording {
     }
 
     public int getDurationInMs() {
-        long fs = getFileSize() * 1000;
-        Log.d("HEE", String.valueOf(fs));
-        return (int) (fs / (Config.sampleRate * 2));
+        long fs = getFileSize();
+        return (int) (fs / (Config.sampleRate / 1000 * 2));
     }
 
     private int skipToNumberOfBytes(double skip) {

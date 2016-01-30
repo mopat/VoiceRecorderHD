@@ -50,7 +50,7 @@ public class Recording {
         this.state = 0;
         this.samplerate = samplerate;
 
-        resetBytes = new byte[1024];
+        resetBytes = new byte[Recorder.bufferSize];
         Arrays.fill(resetBytes, (byte) 0);
     }
 
@@ -173,7 +173,9 @@ public class Recording {
     }
 
     public int getDurationInMs() {
-        return (getFileSize() * 1000) / (Config.sampleRate * 2);
+        long fs = getFileSize() * 1000;
+        Log.d("HEE", String.valueOf(fs));
+        return (int) (fs / (Config.sampleRate * 2));
     }
 
     private int skipToNumberOfBytes(double skip) {

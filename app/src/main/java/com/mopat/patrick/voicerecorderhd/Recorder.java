@@ -11,6 +11,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,16 +34,16 @@ public class Recorder {
     private boolean isRecording = false;
     private String recordingPath = null, recordingFilename = null;
     private int filesize;
-    int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
+    public static int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
             RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
     private List<RecordingListener> recordingListenerList = new ArrayList<>();
     private int state = 0;
 
     private int samplerate;
-    int BufferElements2Rec = 512 / 2; // want to play 2048 (2K) since 2 bytes we use only 1024
+    int BufferElements2Rec = bufferSize / 2; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
     private File recording;
-    private byte[] resetBytes = new byte[1024];
+    private byte[] resetBytes = new byte[bufferSize];
 
     public Recorder(Context context) {
         this.context = context;
@@ -108,18 +109,26 @@ public class Recorder {
         }
         while (isRecording) {
             if (state == 1) {
-                recorder.read(sData, 0, BufferElements2Rec);
+                try {
+                    // create lots of objects here and stash them somewhere
+                    recorder.read(sData, 0, BufferElements2Rec);
 
-                byte bData[] = short2byte(sData);
-                for (byte b : bData) {
-                    bytesList.add(b);
-                }
+                    byte bData[] = short2byte(sData);
+                    for (byte b : bData) {
+                        bytesList.add(b);
+                    }
 //concat(bData);
-                //os.write(bData, 0, BufferElements2Rec * BytesPerElement);
-                written += bData.length;
+                    //os.write(bData, 0, BufferElements2Rec * BytesPerElement);
+                    written += bData.length;
 
-                triggerWrittenBytes(written, bData);
-                filesize = written;
+                    triggerWrittenBytes(written, bData);
+                    filesize = written;
+                } catch (OutOfMemoryError E) {
+                    // release some (all) of the above objects
+                    //stopRecording();
+                    maximumRecordingSizeReached();
+//
+                }
             }
         }
         //write header first
@@ -220,8 +229,6 @@ public class Recorder {
     }
 
     public void renameFile(String filename) {
-        Log.d("RECORDINGFILENBAME1", recordingFilename);
-        Log.d("RECORDINGFILENBAME2", filename);
         File from = new File(Absolutes.DIRECTORY, recordingFilename + Config.filetype);
         File to = new File(Absolutes.DIRECTORY, filename + Config.filetype);
         recordingFilename = filename;
@@ -299,6 +306,14 @@ public class Recorder {
     private void triggerWrittenBytes(final int written, final byte[] bytes) {
         for (RecordingListener listener : recordingListenerList) {
             listener.recordedBytes(written, bytes);
+        }
+    }
+
+    private void maximumRecordingSizeReached() {
+        for (RecordingListener listener : recordingListenerList) {
+            state = 0;
+            isRecording = false;
+            listener.maximumRecordingSizeReached();
         }
     }
 }

@@ -208,13 +208,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "File renaming not possible", Toast.LENGTH_LONG).show();
     }
 
-    private String formatTime(double timeInMs) {
-        return String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
-                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs),
-                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
-        );
-    }
 
     private void displayMyRecordings() {
         String path = Absolutes.DIRECTORY.toString();
@@ -239,7 +232,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 String samplerate = String.valueOf(waveHeader.getSampleRate());
-                String duration = formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+                String duration = TimeFormat.formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
                 Log.d("MODIFIED", String.valueOf(new Date(file[i].lastModified())));
                 String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
                 String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(

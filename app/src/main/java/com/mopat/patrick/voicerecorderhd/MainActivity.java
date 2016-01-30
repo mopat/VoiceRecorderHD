@@ -88,10 +88,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recorder.addRecordingListener(MainActivity.this);
         res = getResources();
 
-        playbackTime.setText(formatTime(0.0));
-        durationTime.setText(formatTime(0.0));
+        playbackTime.setText(TimeFormat.formatTime(0.0));
+        durationTime.setText(TimeFormat.formatTime(0.0));
 
-        resetBytes = new byte[1024];
+        resetBytes = new byte[recorder.bufferSize];
         Arrays.fill(resetBytes, (byte) 0);
 
         setupVisualizerFxAndUI();
@@ -127,10 +127,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 filename = filename.replaceAll("\\s", "");
                 dialog.dismiss();
                 recorder.renameFile(filename);
-                initRecording(recorder.getFilePath(), recorder.getRecordingFilename(), recorder.getSamplerate());
+                initRecording(recorder.getFilePath(), recorder.getRecordingFilename() + Config.filetype, recorder.getSamplerate());
                 Toast.makeText(getApplicationContext(), "File stored at " + Absolutes.DIRECTORY + "/" + filename + Config.filetype, Toast.LENGTH_LONG).show();
                 mVisualizerView.updateVisualizer(resetBytes);
-                recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
+                Log.d("DURATION", String.valueOf(recording.getDurationInMs()));
+                recordDurationTextView.setText(TimeFormat.formatTime(recording.getDurationInMs()));
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
 
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 storeSampleRate(position);
                 if (recording != null) {
                     seekBar.setMax(recording.getDurationInMs());
-                    durationTime.setText(formatTime(recording.getDurationInMs()));
+                    durationTime.setText(TimeFormat.formatTime(recording.getDurationInMs()));
                 }
             }
 
@@ -292,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 Toast.makeText(getApplicationContext(), "File deleted", Toast.LENGTH_LONG).show();
                 recording = null;
                 resetViews();
-                durationTime.setText(formatTime(0.0));
+                durationTime.setText(TimeFormat.formatTime(0.0));
             }
         });
         adb.show();
@@ -301,9 +302,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void initRecording(String filePath, String filename, int samplerate) {
         recording = new Recording(filePath, samplerate, MainActivity.this);
         filenameTextView.setText(filename);
-        recordDurationTextView.setText(formatTime(recording.getDurationInMs()));
+        recordDurationTextView.setText(TimeFormat.formatTime(recording.getDurationInMs()));
         filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recording.getFileSize()));
-        durationTime.setText(formatTime(recording.getDurationInMs()));
+        durationTime.setText(TimeFormat.formatTime(recording.getDurationInMs()));
         seekBar.setMax(recording.getDurationInMs());
 
         recording.addPlaybackListener(MainActivity.this);
@@ -352,9 +353,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
     private void resetViews() {
-        playbackTime.setText(formatTime(0.0));
-        durationTime.setText(formatTime(0.0));
-        recordDurationTextView.setText(formatTime(0.0));
+        playbackTime.setText(TimeFormat.formatTime(0.0));
+        durationTime.setText(TimeFormat.formatTime(0.0));
+        recordDurationTextView.setText(TimeFormat.formatTime(0.0));
         filenameTextView.setText("");
         mVisualizerView.updateVisualizer(resetBytes);
         filesizeTextView.setText("");
@@ -390,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String currentTimeString = formatTime(progress);
+                String currentTimeString = TimeFormat.formatTime(progress);
                 playbackTime.setText(currentTimeString);
             }
 
@@ -472,15 +473,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         return ((long) bytesread * 1000) / (Config.sampleRate * 2);
     }
 
-    private String formatTime(double timeInMs) {
-
-        return String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes((int) timeInMs),
-                TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) - TimeUnit.MILLISECONDS.toMinutes((int) timeInMs) * 60,
-                (TimeUnit.MILLISECONDS.toMillis((int) timeInMs) - TimeUnit.MILLISECONDS.toSeconds((int) timeInMs) * 1000) / 10
-        );
-    }
-
     @Override
     public void playback(final int bytesread, final byte[] playedBytes) {
         this.runOnUiThread(new Runnable() {
@@ -488,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             public void run() {
                 double currentTime = byteToInt(bytesread);
                 seekBar.setProgress((int) (currentTime));
-                String currentTimeString = formatTime(currentTime);
+                String currentTimeString = TimeFormat.formatTime(currentTime);
                 playbackTime.setText(currentTimeString);
                 mVisualizerView.updateVisualizer(playedBytes);
             }
@@ -554,10 +546,28 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     recordDurationTextView.setText("00:00:00");
                     filesizeTextView.setText("");
                 } else {
-                    String currentTimeString = formatTime(currentTime);
+                    String currentTimeString = TimeFormat.formatTime(currentTime);
                     recordDurationTextView.setText(currentTimeString);
                     filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recordedBytes));
                 }
+            }
+        });
+    }
+
+    @Override
+    public void maximumRecordingSizeReached() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "Maximum recoding length reached", Toast.LENGTH_LONG);
+                recorder.stopRecording();
+                showSaveDialog();
+                mVisualizer.setEnabled(false);
+                recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
+                pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+                cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
+                recordButton.clearAnimation();
+                enableViews();
             }
         });
     }

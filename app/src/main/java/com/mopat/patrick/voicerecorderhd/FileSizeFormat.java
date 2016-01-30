@@ -19,7 +19,7 @@ public class FileSizeFormat {
         return Math.round(num * 10.0) / 10.0;
     }
 
-    public static String getFormattedFileSizeForList(int fileSize) {
+    public static String getFormattedFileSizeForList(long fileSize) {
         int length = (int) (Math.log10(fileSize) + 1);
         if (length > 6)
             return String.valueOf(twoDecimals((double) fileSize / (1000 * 1000)) + "MB");
@@ -28,5 +28,6 @@ public class FileSizeFormat {
 
         return "00:00:00";
     }
+
 
 }

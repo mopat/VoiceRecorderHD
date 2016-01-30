@@ -5,4 +5,6 @@ package com.mopat.patrick.voicerecorderhd;
  */
 interface RecordingListener {
     void recordedBytes(int recordedBytes, byte[] bytes);
+
+    void maximumRecordingSizeReached();
 }

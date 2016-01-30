@@ -34,8 +34,7 @@ public class Recorder {
     private boolean isRecording = false;
     private String recordingPath = null, recordingFilename = null;
     private int filesize;
-    public static int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate,
-            RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+    public static int bufferSize = AudioRecord.getMinBufferSize(Config.sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
     private List<RecordingListener> recordingListenerList = new ArrayList<>();
     private int state = 0;
 
@@ -124,8 +123,6 @@ public class Recorder {
                     triggerWrittenBytes(written, bData);
                     filesize = written;
                 } catch (OutOfMemoryError E) {
-                    // release some (all) of the above objects
-                    //stopRecording();
                     maximumRecordingSizeReached();
 //
                 }

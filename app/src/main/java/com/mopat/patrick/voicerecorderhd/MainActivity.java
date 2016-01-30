@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -151,6 +153,18 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         saveRecordingDialog.show();
     }
 
+    public boolean isValidSampleRate() {
+        Log.d("SPINNER", samplerateSpinner.getSelectedItem().toString());
+        int bufferSize = AudioRecord.getMinBufferSize(Integer.parseInt(samplerateSpinner.getSelectedItem().toString()), AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        Log.d("SPINNER", String.valueOf(bufferSize));
+        Log.d("SPINNERBAD", String.valueOf(AudioRecord.ERROR_BAD_VALUE));
+        if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
+            // buffer size is valid, Sample rate supported
+            return true;
+        }
+        return false;
+    }
+
     private void initListeners() {
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,15 +177,20 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 }
 
                 if (!recorder.isRecording()) {
-                    recorder.startRecording();
-                    setupVisualizerFxAndUI();
-                    mVisualizer.setEnabled(true);
-                    recordButton.setBackgroundResource(R.drawable.rec_with_stop);
-                    setRecAnimation();
-                    disableViews();
-                    resetViews();
-                    pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
-                    cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp);
+                    if (isValidSampleRate()) {
+                        recorder.startRecording();
+                        setupVisualizerFxAndUI();
+                        mVisualizer.setEnabled(true);
+                        recordButton.setBackgroundResource(R.drawable.rec_with_stop);
+                        setRecAnimation();
+                        disableViews();
+                        resetViews();
+                        pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp);
+                        cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Samplerate not supported", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else if (recorder.isRecording()) {
                     recorder.stopRecording();
                     showSaveDialog();

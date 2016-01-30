@@ -78,7 +78,7 @@ public class Recording {
                     return;
                 }
 
-                int count = 512; // 512 kb
+                int count = 2048; // 512 kb
 //Reading the file..
 
                 FileInputStream in = null;

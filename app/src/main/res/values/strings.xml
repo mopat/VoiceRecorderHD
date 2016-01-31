@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">VoiceRecorderHD</string>
+    <string name="app_name">HD Voice Recorder</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_my_recording">MyRecording</string>
+    <string name="title_activity_my_recording">Recordings</string>
 <string name="shared_preferences_key">PREFS</string>
 
     <string name="samplerate_prompt">Samplerate (quality)</string>

@@ -321,11 +321,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 myRecordings.clear();
                 displayMyRecordings();
                 return true;
-            case R.id.size:
+      /*      case R.id.size:
                 Config.sorting = 5;
                 myRecordings.clear();
                 displayMyRecordings();
-                return true;
+                return true;*/
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -358,7 +358,6 @@ public class MyRecordingsActivity extends AppCompatActivity {
                     if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
                         String filename = myRecordingsArrayAdapter.getItem(i).getName();
                         String filePath = Absolutes.DIRECTORY + "/" + filename;
-                        Log.d("FILENAME", filename);
                         final File file = new File(filePath);
                         file.delete();
                     }

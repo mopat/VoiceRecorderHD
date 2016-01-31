@@ -154,10 +154,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
     public boolean isValidSampleRate() {
-        Log.d("SPINNER", samplerateSpinner.getSelectedItem().toString());
         int bufferSize = AudioRecord.getMinBufferSize(Integer.parseInt(samplerateSpinner.getSelectedItem().toString()), AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        Log.d("SPINNER", String.valueOf(bufferSize));
-        Log.d("SPINNERBAD", String.valueOf(AudioRecord.ERROR_BAD_VALUE));
         if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
             // buffer size is valid, Sample rate supported
             return true;

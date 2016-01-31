@@ -27,9 +27,9 @@
                 <item
                     android:id="@+id/alph_up"
                     android:title="Name Ascending" />
-                <item
-                    android:id="@+id/size"
-                    android:title="Size" />
+                <!--  <item
+                      android:id="@+id/size"
+                      android:title="Size" />-->
             </menu>
         </item>
     </group>

@@ -54,7 +54,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         android.support.v7.app.ActionBar ab = getSupportActionBar();
-        ab.setDisplayShowTitleEnabled(false);
+        ab.setTitle(R.string.title_activity_my_recording);
         ab.setDisplayHomeAsUpEnabled(true);
         init();
         displayMyRecordings();

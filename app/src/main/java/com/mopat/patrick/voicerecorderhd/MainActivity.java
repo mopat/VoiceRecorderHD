@@ -1,5 +1,6 @@
 package com.mopat.patrick.voicerecorderhd;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,8 @@ import android.media.AudioRecord;
 import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -26,8 +29,11 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.pm.PackageManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
@@ -41,18 +47,62 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private VisualizerView mVisualizerView;
     private Visualizer mVisualizer;
     private byte[] resetBytes;
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (checkAndRequestPermissions()) {
+            createDirectory();
+            init();
+            initListeners();
+            initSeekBar();
+            loadSampleRate();
+            checkIntent();
+        }
+    }
 
-        createDirectory();
-        init();
-        initListeners();
-        initSeekBar();
-        loadSampleRate();
-        checkIntent();
+
+    private boolean checkAndRequestPermissions() {
+        int storagePermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+        int externalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int modifyAudioSettingsPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_AUDIO_SETTINGS);
+        int recordAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (externalStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (modifyAudioSettingsPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.MODIFY_AUDIO_SETTINGS);
+        }
+        if (recordAudioPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.RECORD_AUDIO);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
+            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if(requestCode == REQUEST_ID_MULTIPLE_PERMISSIONS){
+            Intent i = getBaseContext().getPackageManager()
+                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+        }
     }
 
     @Override
@@ -379,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
     }
 
+
     private void disableViews() {
         playButton.setEnabled(false);
         seekBar.setEnabled(false);
@@ -437,15 +488,17 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     @Override
     public void onPause() {
         super.onPause();
-        if (recorder.isRecording())
-            recorder.stopRecording();
-        else if (recording != null && recording.getState() ==1 ) {
-            recording.pause();
+        if (recorder != null) {
+            if (recorder.isRecording())
+                recorder.stopRecording();
+            else if (recording != null && recording.getState() == 1) {
+                recording.pause();
+            }
+            recordButton.clearAnimation();
+            recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
+            mVisualizer.setEnabled(false);
+            resetViews();
         }
-        recordButton.clearAnimation();
-        recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
-        mVisualizer.setEnabled(false);
-        resetViews();
     }
 
     @Override

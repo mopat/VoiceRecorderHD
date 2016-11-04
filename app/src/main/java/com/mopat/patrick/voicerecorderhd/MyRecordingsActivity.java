@@ -246,9 +246,9 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
                     switch (Config.sorting) {
                         case 1:
-                            return m1.getModifiedDate().compareTo(m2.getModifiedDate());
-                        case 2:
                             return m2.getModifiedDate().compareTo(m1.getModifiedDate());
+                        case 2:
+                            return m1.getModifiedDate().compareTo(m2.getModifiedDate());
                         case 3:
                             return m1.getName().compareTo(m2.getName());
                         case 4:
@@ -256,7 +256,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                         case 5:
                             return m1.getFilesize().compareTo(m2.getFilesize());
                     }
-                    return m1.getModifiedDate().compareTo(m2.getModifiedDate());
+                    return m2.getModifiedDate().compareTo(m1.getModifiedDate());
                 }
             });
             myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);

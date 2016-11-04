@@ -10,6 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 4
         versionName "1.3"
+        project.ext.set("archivesBaseName", "HD_Voice_Recorder_Mopat_Dev-" + defaultConfig.versionName);
     }
     buildTypes {
         release {

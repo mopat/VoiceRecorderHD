@@ -31,6 +31,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mopat.patrick.voicerecorderhd.AppRater;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -185,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 recordDurationTextView.setText(TimeFormat.formatTime(recording.getDurationInMs()));
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
-
+                AppRater.app_launched(MainActivity.this);
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

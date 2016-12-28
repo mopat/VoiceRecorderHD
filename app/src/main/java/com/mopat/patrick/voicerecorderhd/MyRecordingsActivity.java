@@ -103,8 +103,8 @@ public class MyRecordingsActivity extends AppCompatActivity {
                         MyRecordingsActivity.this,
                         R.layout.my_simple_list_item);
                 arrayAdapter.add("Delete");
-                arrayAdapter.add("Share...");
-                arrayAdapter.add("Rename...");
+                arrayAdapter.add("Share");
+                arrayAdapter.add("Rename");
                 builderSingle.setNegativeButton(
                         "cancel",
                         new DialogInterface.OnClickListener() {
@@ -232,6 +232,9 @@ public class MyRecordingsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 String samplerate = String.valueOf(waveHeader.getSampleRate());
+                if(waveHeader.getSampleRate() == 0){
+                    samplerate = "44100";
+                }
                 String duration = TimeFormat.formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
                 Log.d("MODIFIED", String.valueOf(new Date(file[i].lastModified())));
                 String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));

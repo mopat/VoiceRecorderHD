@@ -59,7 +59,6 @@ public class Recording {
     }
 
 
-
     public void play(final double skip) {
         new Thread(new Runnable() {
             @Override
@@ -103,7 +102,8 @@ public class Recording {
                     while (bytesread <= fileSize) {
                         if (state == 1) {
                             try {
-                                ret = in.read(byteData, 0, count);
+                                if (count < byteData.length)
+                                    ret = in.read(byteData, 0, count);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

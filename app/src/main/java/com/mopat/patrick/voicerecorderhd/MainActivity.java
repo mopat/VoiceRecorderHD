@@ -98,9 +98,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        if(requestCode == REQUEST_ID_MULTIPLE_PERMISSIONS){
+        if (requestCode == REQUEST_ID_MULTIPLE_PERMISSIONS) {
             Intent i = getBaseContext().getPackageManager()
-                    .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }
@@ -570,7 +570,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
             }
         });
-        recording.stop();
+        if (recording != null)
+            recording.stop();
     }
 
     @Override

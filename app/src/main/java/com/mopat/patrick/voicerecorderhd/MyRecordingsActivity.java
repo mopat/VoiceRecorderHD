@@ -214,60 +214,61 @@ public class MyRecordingsActivity extends AppCompatActivity {
         File f = new File(path);
         File file[] = f.listFiles();
 
-        for (int i = 0; i < file.length; i++) {
-            Log.d("fileending", file[i].getName().substring(file[i].getName().length() - 3, file[i].getName().length()));
-            String filename = file[i].getName();
-            String fileEnding = filename.substring(filename.length() - 4, filename.length());
-            if (fileEnding.equals(Config.filetype)) {
-                WaveHeader waveHeader = new WaveHeader();
-                FileInputStream in = null;
-                try {
-                    in = new FileInputStream(Absolutes.DIRECTORY + "/" + filename);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    waveHeader.read(in);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                String samplerate = String.valueOf(waveHeader.getSampleRate());
-                if(waveHeader.getSampleRate() == 0){
-                    samplerate = "44100";
-                }
-                String duration = TimeFormat.formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
-                Log.d("MODIFIED", String.valueOf(new Date(file[i].lastModified())));
-                String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
-                String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
-                        new Date(file[i].lastModified())
-                );
-
-                Log.d("Files", "FileName:" + file[i].getName());
-                myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
-            }
-            Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
-                public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
-                    switch (Config.sorting) {
-                        case 1:
-                            return m2.getModifiedDate().compareTo(m1.getModifiedDate());
-                        case 2:
-                            return m1.getModifiedDate().compareTo(m2.getModifiedDate());
-                        case 3:
-                            return m1.getName().compareTo(m2.getName());
-                        case 4:
-                            return m2.getName().compareTo(m1.getName());
-                        case 5:
-                            return m1.getFilesize().compareTo(m2.getFilesize());
+        if (file != null)
+            for (int i = 0; i < file.length; i++) {
+                Log.d("fileending", file[i].getName().substring(file[i].getName().length() - 3, file[i].getName().length()));
+                String filename = file[i].getName();
+                String fileEnding = filename.substring(filename.length() - 4, filename.length());
+                if (fileEnding.equals(Config.filetype)) {
+                    WaveHeader waveHeader = new WaveHeader();
+                    FileInputStream in = null;
+                    try {
+                        in = new FileInputStream(Absolutes.DIRECTORY + "/" + filename);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
-                    return m2.getModifiedDate().compareTo(m1.getModifiedDate());
-                }
-            });
-            myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
+                    try {
+                        waveHeader.read(in);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String samplerate = String.valueOf(waveHeader.getSampleRate());
+                    if (waveHeader.getSampleRate() == 0) {
+                        samplerate = "44100";
+                    }
+                    String duration = TimeFormat.formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
+                    Log.d("MODIFIED", String.valueOf(new Date(file[i].lastModified())));
+                    String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
+                    String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
+                            new Date(file[i].lastModified())
+                    );
 
-            myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
-            myRecordingsArrayAdapter.notifyDataSetChanged();
-            Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
-        }
+                    Log.d("Files", "FileName:" + file[i].getName());
+                    myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
+                }
+                Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
+                    public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
+                        switch (Config.sorting) {
+                            case 1:
+                                return m2.getModifiedDate().compareTo(m1.getModifiedDate());
+                            case 2:
+                                return m1.getModifiedDate().compareTo(m2.getModifiedDate());
+                            case 3:
+                                return m1.getName().compareTo(m2.getName());
+                            case 4:
+                                return m2.getName().compareTo(m1.getName());
+                            case 5:
+                                return m1.getFilesize().compareTo(m2.getFilesize());
+                        }
+                        return m2.getModifiedDate().compareTo(m1.getModifiedDate());
+                    }
+                });
+                myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
+
+                myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+                myRecordingsArrayAdapter.notifyDataSetChanged();
+                Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
+            }
     }
 
     @Override
@@ -278,9 +279,13 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 return true;*/
 
             case R.id.action_multiselect:
-                hideDefaultActionBarIcons();
-                showCheckBoxes();
-                selectionMode = true;
+                if (myRecordingsArrayAdapter != null) {
+                    if (myRecordingsArrayAdapter.getCount() > 0) {
+                        hideDefaultActionBarIcons();
+                        showCheckBoxes();
+                        selectionMode = true;
+                    }
+                }
                 return true;
             case R.id.action_delete:
                 deleteFiles();
@@ -299,10 +304,14 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 backFunction();
                 return true;
             case R.id.action_share:
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                sharingIntent.setType("audio/*");
-                sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, getSelectedItems());
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                if (getSelectedItems().size() > 0) {
+                    Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    sharingIntent.setType("audio/*");
+                    sharingIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, getSelectedItems());
+                    startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                } else {
+                    Toast.makeText(getApplicationContext(), "You need to select at least one recording", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.sort_newest:
                 Config.sorting = 1;
@@ -351,26 +360,31 @@ public class MyRecordingsActivity extends AppCompatActivity {
     }
 
     private void deleteFiles() {
-        AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
-        adb.setTitle("Delete files");
-        adb.setMessage("Are you sure you want to delete the selected files");
-        adb.setNegativeButton("Cancel", null);
-        adb.setPositiveButton("Yes", new AlertDialog.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
-                    if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
-                        String filename = myRecordingsArrayAdapter.getItem(i).getName();
-                        String filePath = Absolutes.DIRECTORY + "/" + filename;
-                        final File file = new File(filePath);
-                        file.delete();
+        if (getSelectedItems().size() > 0) {
+            AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
+            adb.setTitle("Delete files");
+            adb.setMessage("Are you sure you want to delete the selected files");
+            adb.setNegativeButton("Cancel", null);
+            adb.setPositiveButton("Yes", new AlertDialog.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+                        if (myRecordingsArrayAdapter.getItem(i).isChecked()) {
+                            String filename = myRecordingsArrayAdapter.getItem(i).getName();
+                            String filePath = Absolutes.DIRECTORY + "/" + filename;
+                            final File file = new File(filePath);
+                            file.delete();
+                        }
                     }
+                    backFunction();
+                    myRecordings.clear();
+                    displayMyRecordings();
                 }
-                backFunction();
-                myRecordings.clear();
-                displayMyRecordings();
-            }
-        });
-        adb.show();
+            });
+            adb.show();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "You need to select at least one recording", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void hideDefaultActionBarIcons() {
@@ -384,15 +398,17 @@ public class MyRecordingsActivity extends AppCompatActivity {
     }
 
     private void selectUnselectAll() {
-        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
-            if (allSelected)
-                myRecordingsArrayAdapter.getItem(i).setChecked(true);
-            else
-                myRecordingsArrayAdapter.getItem(i).setChecked(false);
+        if (myRecordingsArrayAdapter != null) {
+            for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+                if (allSelected)
+                    myRecordingsArrayAdapter.getItem(i).setChecked(true);
+                else
+                    myRecordingsArrayAdapter.getItem(i).setChecked(false);
 
+            }
+            myRecordingsArrayAdapter.notifyDataSetChanged();
+            myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
         }
-        myRecordingsArrayAdapter.notifyDataSetChanged();
-        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
 
     }
 
@@ -416,19 +432,26 @@ public class MyRecordingsActivity extends AppCompatActivity {
     }
 
     private void hideCheckBoxes() {
-        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
-            myRecordingsArrayAdapter.getItem(i).setCheckboxVisible(false);
-        }
-        myRecordingsArrayAdapter.notifyDataSetChanged();
-        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+        if (myRecordingsArrayAdapter != null)
+            if (myRecordingsArrayAdapter.getCount() > 0) {
+                for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+                    myRecordingsArrayAdapter.getItem(i).setCheckboxVisible(false);
+                }
+                myRecordingsArrayAdapter.notifyDataSetChanged();
+                myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+            }
     }
 
     private void showCheckBoxes() {
-        for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
-            myRecordingsArrayAdapter.getItem(i).setCheckboxVisible(true);
+        if (myRecordingsArrayAdapter != null) {
+            if (myRecordingsArrayAdapter.getCount() > 0) {
+                for (int i = 0; i < myRecordingsArrayAdapter.getCount(); i++) {
+                    myRecordingsArrayAdapter.getItem(i).setCheckboxVisible(true);
+                }
+                myRecordingsArrayAdapter.notifyDataSetChanged();
+                myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+            }
         }
-        myRecordingsArrayAdapter.notifyDataSetChanged();
-        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
     }
 
     private void toggleAllSelected() {

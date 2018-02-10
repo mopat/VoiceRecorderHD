@@ -31,6 +31,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.mopat.patrick.voicerecorderhd.AppRater;
 
 import java.util.ArrayList;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private Visualizer mVisualizer;
     private byte[] resetBytes;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+    private InterstitialAd mInterstitialAd;
 
 
     @Override
@@ -62,6 +66,12 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             initSeekBar();
             loadSampleRate();
             checkIntent();
+            MobileAds.initialize(this, Absolutes.ADMOB_ID);
+
+            mInterstitialAd = new InterstitialAd(this);
+            mInterstitialAd.setAdUnitId(Absolutes.AD_UNIT_ID);
+            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
         }
     }
 
@@ -188,6 +198,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
                 AppRater.app_launched(MainActivity.this);
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("TAG", "The interstitial wasn't loaded yet.");
+                }
             }
         });
         saveRecordingDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -397,6 +412,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             Config.sampleRate = Integer.parseInt(samplerate);
             initRecording(filePath, filename, Integer.parseInt(samplerate));
             seekBar.setMax(recording.getDurationInMs());
+            Log.d("rate", String.valueOf(Config.sampleRate));
+
             samplerateSpinner.setSelection(getSpinnerIndex(samplerate));
             storeSampleRate(getSpinnerIndex(samplerate));
             playButton.setBackgroundResource(R.drawable.ic_pause_black_48dp);

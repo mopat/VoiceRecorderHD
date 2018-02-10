@@ -135,7 +135,14 @@ public class Recorder {
         try {
             //
             Byte[] byties = bytesList.toArray(new Byte[bytesList.size()]);
-            os.write(toByte(byties));
+            byte[] bytes = toByte(byties);
+            if(bytes != null){
+                Toast.makeText(context, "Yo ran out of memory. Recording was stopped. ", Toast.LENGTH_LONG).show();
+                stopRecording();
+            }
+            else{
+                os.write(toByte(byties));
+            }
             os.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -143,11 +150,17 @@ public class Recorder {
     }
 
     private byte[] toByte(Byte[] B) {
-        byte[] b2 = new byte[B.length];
-        for (int i = 0; i < B.length; i++) {
-            b2[i] = B[i];
+        try {
+            byte[] b2 = new byte[B.length];
+            for (int i = 0; i < B.length; i++) {
+                b2[i] = B[i];
+            }
+            return b2;
         }
-        return b2;
+        catch(OutOfMemoryError e) {
+            return null;
+        }
+
     }
 
     private byte[] getHeader() {

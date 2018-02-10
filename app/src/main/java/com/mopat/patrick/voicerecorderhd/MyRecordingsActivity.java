@@ -245,6 +245,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
                     Log.d("Files", "FileName:" + file[i].getName());
                     myRecordings.add(new MyRecordingsListitem(filename, samplerate, filesize, duration, modifiedDate, false));
+
                 }
                 Collections.sort(myRecordings, new Comparator<MyRecordingsListitem>() {
                     public int compare(MyRecordingsListitem m1, MyRecordingsListitem m2) {
@@ -263,12 +264,13 @@ public class MyRecordingsActivity extends AppCompatActivity {
                         return m2.getModifiedDate().compareTo(m1.getModifiedDate());
                     }
                 });
-                myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
 
-                myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
-                myRecordingsArrayAdapter.notifyDataSetChanged();
-                Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
             }
+        myRecordingsArrayAdapter = new MyRecordingsArrayAdapter(this, R.layout.my_simple_list_item, myRecordings);
+
+        myRecordingsListView.setAdapter(myRecordingsArrayAdapter);
+        myRecordingsArrayAdapter.notifyDataSetChanged();
+        Log.d("myrecordinglength", String.valueOf(myRecordingsArrayAdapter.getCount()));
     }
 
     @Override

@@ -648,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Maximum recoding length reached", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), "Maximum recoding length reached", Toast.LENGTH_LONG).show();
                 recorder.stopRecording();
                 showSaveDialog();
                 mVisualizer.setEnabled(false);

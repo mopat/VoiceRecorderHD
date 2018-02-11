@@ -136,9 +136,10 @@ public class Recorder {
             //
             Byte[] byties = bytesList.toArray(new Byte[bytesList.size()]);
             byte[] bytes = toByte(byties);
-            if(bytes != null){
+            if(bytes == null){
                 Toast.makeText(context, "Yo ran out of memory. Recording was stopped. ", Toast.LENGTH_LONG).show();
                 stopRecording();
+                maximumRecordingSizeReached();
             }
             else{
                 os.write(toByte(byties));

@@ -90,58 +90,59 @@ public class Recording {
                 if (toSkip % 2 != 0)
                     toSkip--;
                 int bytesread = toSkip, ret = 0;
-
-                try {
-                    in.skip((toSkip));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                // byte[] byties = invert(byteData);
-                if (state != 1) {
-                    state = 1;
-                    while (bytesread <= fileSize) {
-                        if (state == 1) {
-                            try {
-                                if (count < byteData.length)
-                                    ret = in.read(byteData, 0, count);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            if (ret != -1) { // Write the byte array to the track
-                                //update(readBytes);
-                                at.write(byteData, 0, count);
-                                at.play();
-                                playbackPlay();
-                                byte[] readBytes = new byte[ret];
-                                System.arraycopy(byteData, 0, readBytes, 0, readBytes.length);
-                                bytesread += ret;
-                                lastPlayed = bytesread;
-                                playback(bytesread, readBytes);
-
-                                //Log.d("BYTESREAD", String.valueOf(bytesread));
-                            } else {
-                                playbackComplete();
-                                break;
-                            }
-                        } else if (state == 2) {
-                            playback(lastPlayed, resetBytes);
-                            playbackPaused();
-                            break;
-                        } else if (state == 0) {
-                            playbackStop();
-                            break;
-                        }
-                    }
+                if (in != null) {
                     try {
-                        in.close();
+                        in.skip(toSkip);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    // byte[] byties = invert(byteData);
+                    if (state != 1) {
+                        state = 1;
+                        while (bytesread <= fileSize) {
+                            if (state == 1) {
+                                try {
+                                    if (count < byteData.length)
+                                        ret = in.read(byteData, 0, count);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                if (ret != -1) { // Write the byte array to the track
+                                    //update(readBytes);
+                                    at.write(byteData, 0, count);
+                                    at.play();
+                                    playbackPlay();
+                                    byte[] readBytes = new byte[ret];
+                                    System.arraycopy(byteData, 0, readBytes, 0, readBytes.length);
+                                    bytesread += ret;
+                                    lastPlayed = bytesread;
+                                    playback(bytesread, readBytes);
 
-                    if (state == 1)
-                        playbackComplete();
-                    at.stop();
-                    at.release();
+                                    //Log.d("BYTESREAD", String.valueOf(bytesread));
+                                } else {
+                                    playbackComplete();
+                                    break;
+                                }
+                            } else if (state == 2) {
+                                playback(lastPlayed, resetBytes);
+                                playbackPaused();
+                                break;
+                            } else if (state == 0) {
+                                playbackStop();
+                                break;
+                            }
+                        }
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (state == 1)
+                            playbackComplete();
+                        at.stop();
+                        at.release();
+                    }
                 }
             }
         }).start();

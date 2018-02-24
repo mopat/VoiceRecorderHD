@@ -134,14 +134,23 @@ public class Recorder {
         //write bytes
         try {
             //
-            Byte[] byties = bytesList.toArray(new Byte[bytesList.size()]);
-            byte[] bytes = toByte(byties);
-            if(bytes == null){
+            Byte[] byties;
+            try {
+                byties = bytesList.toArray(new Byte[bytesList.size()]);
+            } catch (OutOfMemoryError e) {
                 Toast.makeText(context, "Yo ran out of memory. Recording was stopped. ", Toast.LENGTH_LONG).show();
                 stopRecording();
                 maximumRecordingSizeReached();
+                os.close();
+                return;
             }
-            else{
+
+            byte[] bytes = toByte(byties);
+            if (bytes == null) {
+                Toast.makeText(context, "Yo ran out of memory. Recording was stopped. ", Toast.LENGTH_LONG).show();
+                stopRecording();
+                maximumRecordingSizeReached();
+            } else {
                 os.write(toByte(byties));
             }
             os.close();
@@ -157,8 +166,7 @@ public class Recorder {
                 b2[i] = B[i];
             }
             return b2;
-        }
-        catch(OutOfMemoryError e) {
+        } catch (OutOfMemoryError e) {
             return null;
         }
 
@@ -169,7 +177,7 @@ public class Recorder {
         long longSampleRate = Config.sampleRate;
         int channels = 1;
         long byteRate = 192;
-
+        Log.d("samplerate ", String.valueOf(samplerate));
         //Stops playback at totalAudioLen
         int totalAudioLen = filesize;
         int totalDataLen = totalAudioLen + 36;

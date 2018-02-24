@@ -21,6 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +41,8 @@ public class MyRecordingsActivity extends AppCompatActivity {
     private ArrayList<MyRecordingsListitem> myRecordings = new ArrayList<>();
     private Menu menu;
     private boolean allSelected = false, selectionMode = false;
+    private InterstitialAd mInterstitialAd;
+
     /*
     Sort: 1 -> new  ->old
     Sort: 2 -> old  ->new
@@ -59,6 +64,16 @@ public class MyRecordingsActivity extends AppCompatActivity {
         init();
         displayMyRecordings();
         initListeners();
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(Absolutes.AD_UNIT_ID);
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            Log.d("AD", "The interstitial wasn't loaded yet.");
+        }
     }
 
     @Override
@@ -103,8 +118,8 @@ public class MyRecordingsActivity extends AppCompatActivity {
                         MyRecordingsActivity.this,
                         R.layout.my_simple_list_item);
                 arrayAdapter.add("Delete");
-                arrayAdapter.add("Share");
-                arrayAdapter.add("Rename");
+                arrayAdapter.add("Share...");
+                arrayAdapter.add("Rename...");
                 builderSingle.setNegativeButton(
                         "cancel",
                         new DialogInterface.OnClickListener() {
@@ -128,6 +143,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
                                     Uri uri = Uri.parse(Absolutes.DIRECTORY + "/" + filename);
                                     sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
                                     startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                                    if (mInterstitialAd.isLoaded()) {
+                                        mInterstitialAd.show();
+                                    } else {
+                                        Log.d("AD", "The interstitial wasn't loaded yet.");
+                                    }
                                 } else if (strName.equals("Rename...")) {
                                     showRenameDialog(filename);
                                 }
@@ -169,6 +189,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "File deleted", Toast.LENGTH_LONG).show();
                 myRecordings.clear();
                 displayMyRecordings();
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("AD", "The interstitial wasn't loaded yet.");
+                }
             }
         });
         adb.show();
@@ -176,7 +201,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
     private void showRenameDialog(final String filename) {
         AlertDialog.Builder adb = new AlertDialog.Builder(MyRecordingsActivity.this);
-        adb.setTitle("Delete?");
+        adb.setTitle("Rename");
         final EditText filenameEditText = new EditText(MyRecordingsActivity.this);
         filenameEditText.setHint("Filename");
         adb.setView(filenameEditText);
@@ -194,6 +219,11 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 renameFile(cuttedFilename, newfilename);
                 myRecordings.clear();
                 displayMyRecordings();
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("AD", "The interstitial wasn't loaded yet.");
+                }
             }
         });
         adb.show();
@@ -216,9 +246,10 @@ public class MyRecordingsActivity extends AppCompatActivity {
 
         if (file != null)
             for (int i = 0; i < file.length; i++) {
-                Log.d("fileending", file[i].getName().substring(file[i].getName().length() - 3, file[i].getName().length()));
                 String filename = file[i].getName();
                 String fileEnding = filename.substring(filename.length() - 4, filename.length());
+                // Log.d("fileending", fileEnding);
+
                 if (fileEnding.equals(Config.filetype)) {
                     WaveHeader waveHeader = new WaveHeader();
                     FileInputStream in = null;
@@ -239,7 +270,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                     String duration = TimeFormat.formatTime(file[i].length() * 1000 / (Integer.parseInt(samplerate) * 2));
                     Log.d("MODIFIED", String.valueOf(new Date(file[i].lastModified())));
                     String filesize = String.valueOf(FileSizeFormat.getFormattedFileSizeForList((int) file[i].length()));
-                    String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(
+                    String modifiedDate = new SimpleDateFormat("dd.MM.yyyy, HH:mm:ss").format(
                             new Date(file[i].lastModified())
                     );
 
@@ -260,8 +291,10 @@ public class MyRecordingsActivity extends AppCompatActivity {
                                 return m2.getName().compareTo(m1.getName());
                             case 5:
                                 return m1.getFilesize().compareTo(m2.getFilesize());
+                            default:
+                                return m2.getModifiedDate().compareTo(m1.getModifiedDate());
                         }
-                        return m2.getModifiedDate().compareTo(m1.getModifiedDate());
+
                     }
                 });
 
@@ -383,8 +416,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 }
             });
             adb.show();
-        }
-        else{
+        } else {
             Toast.makeText(getApplicationContext(), "You need to select at least one recording", Toast.LENGTH_SHORT).show();
         }
     }

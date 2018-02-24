@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                 } else {
-                    Log.d("TAG", "The interstitial wasn't loaded yet.");
+                    Log.d("AD", "The interstitial wasn't loaded yet.");
                 }
             }
         });
@@ -214,6 +214,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("AD", "The interstitial wasn't loaded yet.");
+                }
             }
         });
         saveRecordingDialog.show();
@@ -333,6 +338,11 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 if (recording != null) {
                     seekBar.setMax(recording.getDurationInMs());
                     durationTime.setText(TimeFormat.formatTime(recording.getDurationInMs()));
+                }
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    Log.d("AD", "The interstitial wasn't loaded yet.");
                 }
             }
 

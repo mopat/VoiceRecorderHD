@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
                 AppRater.app_launched(MainActivity.this);
-                if (mInterstitialAd.isLoaded()) {
+                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
-                if (mInterstitialAd.isLoaded()) {
+                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     seekBar.setMax(recording.getDurationInMs());
                     durationTime.setText(TimeFormat.formatTime(recording.getDurationInMs()));
                 }
-                if (mInterstitialAd.isLoaded()) {
+                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");

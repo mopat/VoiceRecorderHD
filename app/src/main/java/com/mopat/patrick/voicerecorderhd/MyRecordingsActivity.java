@@ -69,7 +69,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
         mInterstitialAd.setAdUnitId(Absolutes.AD_UNIT_ID);
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
-        if (mInterstitialAd.isLoaded()) {
+        if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
             mInterstitialAd.show();
         } else {
             Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -143,7 +143,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                                     Uri uri = Uri.parse(Absolutes.DIRECTORY + "/" + filename);
                                     sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
                                     startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                                    if (mInterstitialAd.isLoaded()) {
+                                    if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                                         mInterstitialAd.show();
                                     } else {
                                         Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -189,7 +189,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "File deleted", Toast.LENGTH_LONG).show();
                 myRecordings.clear();
                 displayMyRecordings();
-                if (mInterstitialAd.isLoaded()) {
+                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -219,7 +219,7 @@ public class MyRecordingsActivity extends AppCompatActivity {
                 renameFile(cuttedFilename, newfilename);
                 myRecordings.clear();
                 displayMyRecordings();
-                if (mInterstitialAd.isLoaded()) {
+                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");

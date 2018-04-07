@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.mopat.patrick.voicerecorderhd"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.6"
+        versionCode 11
+        versionName "1.8"
         project.ext.set("archivesBaseName", "HD_Voice_Recorder_Mopat_Dev-" + defaultConfig.versionName);
     }
     buildTypes {

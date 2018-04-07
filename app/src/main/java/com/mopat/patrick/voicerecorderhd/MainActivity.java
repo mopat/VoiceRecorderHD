@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         int externalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int modifyAudioSettingsPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_AUDIO_SETTINGS);
         int recordAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        int internetPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
 
 
         List<String> listPermissionsNeeded = new ArrayList<>();
@@ -97,13 +98,17 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         if (recordAudioPermission != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.RECORD_AUDIO);
         }
+        if (internetPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.INTERNET);
+        }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
-            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder Pro", Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -167,7 +172,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void setupVisualizerFxAndUI() {
         // Create the Visualizer object and attach it to our media player.
         mVisualizer = new Visualizer(0);
-        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
+        if(Visualizer.getCaptureSizeRange().length > 0){
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
+        }
+        else{
+            mVisualizer.setCaptureSize(1024);
+
+        }
     }
 
     private void showSaveDialog() {

@@ -8,8 +8,8 @@ android {
         applicationId "com.mopat.patrick.voicerecorderhd"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 11
-        versionName "1.8"
+        versionCode 12
+        versionName "1.9"
         project.ext.set("archivesBaseName", "HD_Voice_Recorder_Mopat_Dev-" + defaultConfig.versionName);
     }
     buildTypes {

@@ -17,7 +17,7 @@ import android.widget.TextView;
  */
 
 public class AppRater {
-    private final static String APP_TITLE = "HD Voice Recorder";// App Name
+    private final static String APP_TITLE = "HD Voice Recorder Pro";// App Name
     private static String packageName = null;// Package Name
 
     private final static int DAYS_UNTIL_PROMPT = 2;//Min number of days

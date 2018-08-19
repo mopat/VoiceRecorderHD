@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             checkIntent();
             MobileAds.initialize(this, Absolutes.ADMOB_ID);
 
-            mInterstitialAd = new InterstitialAd(this);
-            mInterstitialAd.setAdUnitId(Absolutes.AD_UNIT_ID);
-            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            //mInterstitialAd = new InterstitialAd(this);
+            //mInterstitialAd.setAdUnitId(Absolutes.AD_UNIT_ID);
+            //mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
         }
     }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
-            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder Pro", Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
                 AppRater.app_launched(MainActivity.this);
-                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
+                if (mInterstitialAd != null && mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 Toast.makeText(getApplicationContext(), "File not saved", Toast.LENGTH_LONG).show();
                 pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
                 cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
-                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
+                if (mInterstitialAd != null && mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");
@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                     seekBar.setMax(recording.getDurationInMs());
                     durationTime.setText(TimeFormat.formatTime(recording.getDurationInMs()));
                 }
-                if (mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
+                if (mInterstitialAd != null && mInterstitialAd.isLoaded() && !Absolutes.IS_PRO) {
                     mInterstitialAd.show();
                 } else {
                     Log.d("AD", "The interstitial wasn't loaded yet.");

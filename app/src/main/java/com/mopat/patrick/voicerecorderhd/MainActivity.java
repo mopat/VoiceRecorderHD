@@ -2,6 +2,7 @@ package com.mopat.patrick.voicerecorderhd;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -35,6 +37,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.mopat.patrick.voicerecorderhd.AppRater;
+import com.mopat.patrick.voicerecorderhd.GoForPro;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
-    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView, filesizeTextView;
+    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView, filesizeTextView, goForProTextView;
     private Spinner samplerateSpinner;
     private Resources res;
     private VisualizerView mVisualizerView;
@@ -73,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
         }
+
+        GoForPro.app_launched(MainActivity.this);
     }
 
 
@@ -150,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
         recordDurationTextView = (TextView) findViewById(R.id.record_duration_textview);
         filesizeTextView = (TextView) findViewById(R.id.filesize_text_view);
+        goForProTextView = (Button) findViewById(R.id.goforpro_textview);
         mVisualizerView = (VisualizerView) findViewById(R.id.myvisualizerview);
         mVisualizerView.updateVisualizer(resetBytes);
         recorder = new Recorder(getApplicationContext());
@@ -360,6 +366,17 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        goForProTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + Absolutes.PRO_PACKAGE_NAME)));
+                } catch (ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + Absolutes.PRO_PACKAGE_NAME)));
+                }
             }
         });
     }

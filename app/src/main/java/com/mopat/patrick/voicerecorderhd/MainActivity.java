@@ -36,6 +36,14 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.mopat.patrick.voicerecorderhd.AppRater;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -224,6 +232,37 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         saveRecordingDialog.show();
     }
 
+    private static byte[] readBytesFromFile(String filePath) {
+
+        FileInputStream fileInputStream = null;
+        byte[] bytesArray = null;
+
+        try {
+
+            File file = new File(filePath);
+            bytesArray = new byte[(int) file.length()];
+
+            //read file into bytes[]
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bytesArray);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        return bytesArray;
+
+    }
+
     public boolean isValidSampleRate() {
         int bufferSize = AudioRecord.getMinBufferSize(Integer.parseInt(samplerateSpinner.getSelectedItem().toString()), AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
@@ -404,6 +443,52 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recording.addPauseListener(MainActivity.this);
         recording.addPlayListener(MainActivity.this);
         recording.addStopListener(MainActivity.this);
+//rewriteSamplerate(filePath);
+    }
+
+    private void rewriteSamplerate(String filePath){
+        // convert file to byte[]
+        byte[] bFile = readBytesFromFile(filePath);
+
+        //java nio
+        //byte[] bFile = Files.readAllBytes(new File("C:\\temp\\testing1.txt").toPath());
+        //byte[] bFile = Files.readAllBytes(Paths.get("C:\\temp\\testing1.txt"));
+
+        bFile[24] = (byte) (22050 & 0xff);
+        bFile[25] = (byte) ((22050 >> 8) & 0xff);
+        bFile[26] = (byte) ((22050 >> 16) & 0xff);
+        bFile[27] = (byte) ((22050 >> 24) & 0xff);
+        // save byte[] into a file
+        // Path path = Paths.get("C:\temp\\test2.txt");
+        //   Files.write(path, bFile);
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(filePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            stream.write(bFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //Print bytes[]
+/*
+        for (int i = 0; i < bFile.length; i++) {
+
+            System.out.print("byte");
+            System.out.print((char) bFile[i]);
+        }
+*/
+
+
     }
 
     private void setRecAnimation() {

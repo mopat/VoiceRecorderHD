@@ -375,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
                 if(!Absolutes.IS_PRO){
                     AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
                     adb.setTitle("Pro-Version required");
-                    adb.setMessage("HD Voice Recorder Pro is required the save Tracks with a new samplerate.");
+                    adb.setMessage("HD Voice Recorder Pro is required to save edited Tracks.");
                     adb.setNegativeButton("Cancel", null);
                     adb.setPositiveButton("Visit Play Store", new AlertDialog.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -567,7 +567,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             recordButton.clearAnimation();
             recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
             mVisualizer.setEnabled(false);
-            resetViews();
+            //resetViews();
         }
     }
 

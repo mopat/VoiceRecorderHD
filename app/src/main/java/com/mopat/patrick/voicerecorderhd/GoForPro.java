@@ -59,7 +59,7 @@ public class GoForPro {
         ll.setOrientation(LinearLayout.VERTICAL);
 
         TextView tv = new TextView(mContext);
-        tv.setText("If you enjoy using HD Voice Recorder try the Ad-Free Pro-Version!");
+        tv.setText("If you enjoy using HD Voice Recorder try the Ad-Free Pro-Version with advanced Features!");
         tv.setTextSize(18);
         tv.setGravity(Gravity.CENTER);
         tv.setHeight(350);

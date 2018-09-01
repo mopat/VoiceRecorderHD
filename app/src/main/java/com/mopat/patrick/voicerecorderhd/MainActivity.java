@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
             final AlertDialog.Builder setSampleRateDialog = new AlertDialog.Builder(this);
 
-            setSampleRateDialog.setTitle("Save File?");
+            setSampleRateDialog.setTitle("Save File with samplerate of " + samplerateSpinner.getSelectedItem().toString() + "?");
             setSampleRateDialog.setCancelable(false);
             final EditText filenameEditText = new EditText(MainActivity.this);
             filenameEditText.setHint("Filename");
@@ -425,6 +425,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             setSampleRateDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    recording.stop();
+
                     dialog.dismiss();
                     String filename = filenameEditText.getText().toString();
                     String newFilePath = Absolutes.DIRECTORY + "/" + filename + Config.filetype;
@@ -548,6 +550,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recording.addPauseListener(MainActivity.this);
         recording.addPlayListener(MainActivity.this);
         recording.addStopListener(MainActivity.this);
+        setSamplerateButton.setBackgroundResource(R.drawable.ic_menu_save_48dp);
     }
 
 
@@ -600,6 +603,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         filesizeTextView.setText("");
         pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
         cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
+        setSamplerateButton.setBackgroundResource(R.drawable.ic_menu_save_disabled_48dp);
     }
 
 
@@ -670,7 +674,6 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             recordButton.clearAnimation();
             recordButton.setBackgroundResource(R.drawable.ic_mic_black_48dp);
             mVisualizer.setEnabled(false);
-            resetViews();
         }
     }
 

@@ -37,16 +37,15 @@
             android:prompt="@string/samplerate_prompt"
             android:theme="@style/Widget.AppCompat.Light.DropDownItem.Spinner" />
 
-        <Button
-            android:id="@+id/goforpro_textview"
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:id="@+id/set_samplerate_button"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/samplerate_spinner"
-            android:layout_marginTop="3dp"
-            android:gravity="center"
-            android:text="Ad-FREE"
-            android:textColor="#000" />
+            android:layout_toLeftOf="@id/my_recordings_button"
+            android:background="@drawable/ic_menu_save_disabled_48dp" />
 
         <ImageButton
             android:id="@+id/my_recordings_button"

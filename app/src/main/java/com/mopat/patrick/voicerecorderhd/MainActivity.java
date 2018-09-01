@@ -44,11 +44,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
-    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton;
+    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton, setSamplerateButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
-    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView, filesizeTextView, goForProTextView;
+    private TextView playbackTime, durationTime, filenameTextView, recordDurationTextView, filesizeTextView;
     private Spinner samplerateSpinner;
     private Resources res;
     private VisualizerView mVisualizerView;
@@ -149,13 +149,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         pauseRecordingButton = (ImageButton) findViewById(R.id.pause_recording_button);
         myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
         cancelRecordingbutton = (ImageButton) findViewById(R.id.cancel_recording_button);
+        setSamplerateButton = (ImageButton) findViewById(R.id.set_samplerate_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
         recordDurationTextView = (TextView) findViewById(R.id.record_duration_textview);
         filesizeTextView = (TextView) findViewById(R.id.filesize_text_view);
-        goForProTextView = (Button) findViewById(R.id.goforpro_textview);
         mVisualizerView = (VisualizerView) findViewById(R.id.myvisualizerview);
         mVisualizerView.updateVisualizer(resetBytes);
         recorder = new Recorder(getApplicationContext());
@@ -369,13 +369,24 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
             }
         });
 
-        goForProTextView.setOnClickListener(new View.OnClickListener() {
+        setSamplerateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + Absolutes.PRO_PACKAGE_NAME)));
-                } catch (ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + Absolutes.PRO_PACKAGE_NAME)));
+                if(!Absolutes.IS_PRO){
+                    AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+                    adb.setTitle("Pro-Version required");
+                    adb.setMessage("HD Voice Recorder Pro is required the save Tracks with a new samplerate.");
+                    adb.setNegativeButton("Cancel", null);
+                    adb.setPositiveButton("Visit Play Store", new AlertDialog.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + Absolutes.PRO_PACKAGE_NAME)));
+                            } catch (ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + Absolutes.PRO_PACKAGE_NAME)));
+                            }
+                        }
+                    });
+                    adb.show();
                 }
             }
         });
@@ -432,6 +443,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recording.addPauseListener(MainActivity.this);
         recording.addPlayListener(MainActivity.this);
         recording.addStopListener(MainActivity.this);
+
+        setSamplerateButton.setBackgroundResource(R.drawable.ic_menu_save_48dp);
     }
 
     private void setRecAnimation() {
@@ -483,6 +496,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         filesizeTextView.setText("");
         pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
         cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
+        setSamplerateButton.setBackgroundResource(R.drawable.ic_menu_save_disabled_48dp);
     }
 
 

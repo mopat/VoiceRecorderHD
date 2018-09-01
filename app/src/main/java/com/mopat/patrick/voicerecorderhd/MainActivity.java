@@ -49,7 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
-    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton;
+    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton, setSamplerateButton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private byte[] resetBytes;
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     private InterstitialAd mInterstitialAd;
+    private String filePath, fileName;
 
 
     @Override
@@ -147,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         pauseRecordingButton = (ImageButton) findViewById(R.id.pause_recording_button);
         myRecordingsButton = (ImageButton) findViewById(R.id.my_recordings_button);
         cancelRecordingbutton = (ImageButton) findViewById(R.id.cancel_recording_button);
+        setSamplerateButton = (ImageButton) findViewById(R.id.set_samplerate_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
@@ -390,7 +392,108 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
 
             }
         });
+        setSamplerateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Absolutes.IS_PRO)
+                    showSetSamplerateDialog();
+                else {
+
+                }
+            }
+        });
     }
+
+    private void showSetSamplerateDialog() {
+        if (recording != null) {
+            recording.pause();
+
+            final AlertDialog.Builder setSampleRateDialog = new AlertDialog.Builder(this);
+
+            setSampleRateDialog.setTitle("Save File?");
+            setSampleRateDialog.setCancelable(false);
+            final EditText filenameEditText = new EditText(MainActivity.this);
+            filenameEditText.setHint("Filename");
+            setSampleRateDialog.setView(filenameEditText);
+            String filename = fileName.replaceAll("\\s", "");
+
+            if (filename.contains(".")) {
+                filename = filename.substring(0, filename.lastIndexOf('.'));
+            }
+
+            filenameEditText.setText(filename);
+            setSampleRateDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    String filename = filenameEditText.getText().toString();
+                    String newFilePath = Absolutes.DIRECTORY + "/" + filename + Config.filetype;
+                    dialog.dismiss();
+
+                    rewriteSamplerate(filePath, newFilePath);
+                    initRecording(newFilePath, filename + Config.filetype, Integer.parseInt(samplerateSpinner.getSelectedItem().toString()));
+                    Toast.makeText(getApplicationContext(), "File stored at " + newFilePath, Toast.LENGTH_LONG).show();
+                    mVisualizerView.updateVisualizer(resetBytes);
+                    filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recording.getFileSize()));
+                    recordDurationTextView.setText(TimeFormat.formatTime(recording.getDurationInMs()));
+                    pauseRecordingButton.setBackgroundResource(R.drawable.ic_pause_circle_filled_black_48dp_disabled);
+                    cancelRecordingbutton.setBackgroundResource(R.drawable.ic_close_circle_filled_black_48dp_disabled);
+                }
+            });
+            setSampleRateDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            setSampleRateDialog.show();
+        }
+        Toast.makeText(getApplicationContext(), "A recording must be selected to use this function.", Toast.LENGTH_LONG).show();
+    }
+
+    private void rewriteSamplerate(String filePath, String newFilePath) {
+        // convert file to byte[]
+        byte[] bFile = readBytesFromFile(filePath);
+
+        //java nio
+        //byte[] bFile = Files.readAllBytes(new File("C:\\temp\\testing1.txt").toPath());
+        //byte[] bFile = Files.readAllBytes(Paths.get("C:\\temp\\testing1.txt"));
+        int samplerate = Integer.parseInt(samplerateSpinner.getSelectedItem().toString());
+        bFile[24] = (byte) (samplerate & 0xff);
+        bFile[25] = (byte) ((samplerate >> 8) & 0xff);
+        bFile[26] = (byte) ((samplerate >> 16) & 0xff);
+        bFile[27] = (byte) ((samplerate >> 24) & 0xff);
+        // save byte[] into a file
+        // Path path = Paths.get("C:\temp\\test2.txt");
+        //   Files.write(path, bFile);
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(newFilePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            stream.write(bFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //Print bytes[]
+/*
+        for (int i = 0; i < bFile.length; i++) {
+
+            System.out.print("byte");
+            System.out.print((char) bFile[i]);
+        }
+*/
+    }
+
 
     private void showCancelDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
@@ -430,8 +533,10 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         adb.show();
     }
 
-    private void initRecording(String filePath, String filename, int samplerate) {
-        recording = new Recording(filePath, samplerate, MainActivity.this);
+    private void initRecording(String filepath, String filename, int samplerate) {
+        filePath = filepath;
+        fileName = filename;
+        recording = new Recording(filepath, samplerate, MainActivity.this);
         filenameTextView.setText(filename);
         recordDurationTextView.setText(TimeFormat.formatTime(recording.getDurationInMs()));
         filesizeTextView.setText(FileSizeFormat.getFormattedFileSize(recording.getFileSize()));
@@ -443,53 +548,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         recording.addPauseListener(MainActivity.this);
         recording.addPlayListener(MainActivity.this);
         recording.addStopListener(MainActivity.this);
-//rewriteSamplerate(filePath);
     }
 
-    private void rewriteSamplerate(String filePath){
-        // convert file to byte[]
-        byte[] bFile = readBytesFromFile(filePath);
-
-        //java nio
-        //byte[] bFile = Files.readAllBytes(new File("C:\\temp\\testing1.txt").toPath());
-        //byte[] bFile = Files.readAllBytes(Paths.get("C:\\temp\\testing1.txt"));
-
-        bFile[24] = (byte) (22050 & 0xff);
-        bFile[25] = (byte) ((22050 >> 8) & 0xff);
-        bFile[26] = (byte) ((22050 >> 16) & 0xff);
-        bFile[27] = (byte) ((22050 >> 24) & 0xff);
-        // save byte[] into a file
-        // Path path = Paths.get("C:\temp\\test2.txt");
-        //   Files.write(path, bFile);
-        FileOutputStream stream = null;
-        try {
-            stream = new FileOutputStream(filePath);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            stream.write(bFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //Print bytes[]
-/*
-        for (int i = 0; i < bFile.length; i++) {
-
-            System.out.print("byte");
-            System.out.print((char) bFile[i]);
-        }
-*/
-
-
-    }
 
     private void setRecAnimation() {
         AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);

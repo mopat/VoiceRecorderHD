@@ -28,7 +28,7 @@
 
         <Spinner
             android:id="@+id/samplerate_spinner"
-            android:layout_width="150dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/quality_label"
@@ -36,6 +36,16 @@
             android:gravity="left"
             android:prompt="@string/samplerate_prompt"
             android:theme="@style/Widget.AppCompat.Light.DropDownItem.Spinner" />
+
+        <ImageButton
+            android:id="@+id/set_samplerate_button"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/my_recordings_button"
+            android:background="@drawable/ic_menu_save_48dp" />
 
         <ImageButton
             android:id="@+id/my_recordings_button"

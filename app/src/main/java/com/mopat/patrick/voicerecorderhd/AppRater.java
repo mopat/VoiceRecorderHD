@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -65,7 +66,10 @@ public class AppRater {
         tv.setText("If you enjoy using " + APP_TITLE + ", please take a moment to rate it. Thanks for your support!");
         tv.setPadding(10, 10, 10, 10);
         ll.addView(tv);
-
+        tv.setTextSize(18);
+        tv.setGravity(Gravity.CENTER);
+        tv.setHeight(350);
+        tv.setPadding(10, 10, 10, 10);
         Button b1 = new Button(mContext);
         b1.setText("Rate " + APP_TITLE);
         b1.setOnClickListener(new View.OnClickListener() {

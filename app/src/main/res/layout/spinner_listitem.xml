@@ -7,5 +7,6 @@
     android:textColor="@color/textColor"
     android:id="@+id/spinner_listiem"
     android:background="@color/backgroundColor"
-    android:width="160sp"
+    android:width="200sp"
+    android:height="25sp"
     />

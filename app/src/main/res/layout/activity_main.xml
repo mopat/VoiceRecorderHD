@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F7F7"
+    android:background="@color/backgroundColor"
     android:scaleType="centerCrop"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:keepScreenOn="true"
-    tools:context="com.mopat.patrick.voicerecorder.MainActivity">
+    tools:context="com.mopat.patrick.voicerecorderhd.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,26 +24,27 @@
             android:layout_marginTop="3dp"
             android:gravity="left"
             android:text="Quality (Hz):"
-            android:textColor="#000" />
+            android:textColor="@color/textColor" />
 
         <Spinner
             android:id="@+id/samplerate_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/quality_label"
+            android:background="@color/backgroundColor"
             android:entries="@array/samplerate_array"
+            android:layout_marginTop="3dp"
             android:gravity="left"
             android:prompt="@string/samplerate_prompt"
             android:theme="@style/Widget.AppCompat.Light.DropDownItem.Spinner" />
 
         <ImageButton
             android:id="@+id/set_samplerate_button"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="5dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="5dp"
             android:layout_toLeftOf="@id/my_recordings_button"
             android:background="@drawable/ic_menu_save_disabled_48dp" />
 
@@ -51,8 +52,8 @@
             android:id="@+id/my_recordings_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:layout_gravity="right"
             android:background="@drawable/ic_queue_music_black_48dp" />
 
@@ -70,7 +71,7 @@
     <LinearLayout
         android:layout_width="110dp"
         android:layout_height="70dp"
-        android:paddingTop="6dp"
+        android:paddingTop="3dp"
         android:orientation="horizontal"
         android:layout_gravity="center">
 
@@ -99,7 +100,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="00:00:00"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="@color/textColor"/>
 
     <com.mopat.patrick.voicerecorderhd.VisualizerView
         android:id="@+id/myvisualizerview"
@@ -117,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:textColor="#000" />
+            android:textColor="@color/textColor" />
 
 
         <TextView
@@ -126,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:textColor="#000" />
+            android:textColor="@color/textColor" />
     </LinearLayout>
 
     <LinearLayout
@@ -148,7 +150,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:clickable="false"
-            android:enabled="false" />
+            android:enabled="false"
+            android:layout_marginTop="6dp"
+            />
 
         <ImageButton
             android:id="@+id/stop_button"
@@ -171,7 +175,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:text="00:00:00"
-            android:textColor="#000" />
+            android:textColor="@color/textColor" />
 
         <TextView
             android:id="@+id/duration_time"
@@ -180,7 +184,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:text="00:00:00"
-            android:textColor="#000" />
+            android:textColor="@color/textColor" />
     </RelativeLayout>
 
 </LinearLayout>

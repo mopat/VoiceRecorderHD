@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -141,7 +142,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
 
-    private void init() {
+    private void init() {    String[] samplerateArray;
+
         recordButton = (ImageButton) findViewById(R.id.record_button);
         playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
@@ -151,6 +153,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         cancelRecordingbutton = (ImageButton) findViewById(R.id.cancel_recording_button);
         setSamplerateButton = (ImageButton) findViewById(R.id.set_samplerate_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
+        samplerateArray= getResources().getStringArray(R.array.samplerate_array);
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this,R.layout.spinner_listitem,samplerateArray
+        );
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_listitem);
+        samplerateSpinner.setAdapter(spinnerArrayAdapter);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);

@@ -3,8 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="listItemMain">#575757</color>
-    <color name="listItemMetadata">#585858</color>
-    <color name="actionbarColor">#000</color>
-    <color name="accentColor">#16AFBA</color>
+    <color name="listItemMain">#F7F7F7</color>
+    <color name="listItemMetadata">#F7F7F7</color>
+    <color name="actionbarColor">#FF6A5D</color>
+    <color name="accentColor">#FF6A5D</color>
+    <color name="textColor">#F7F7F7</color>
+    <color name="backgroundColor">#262626</color>
 </resources>

@@ -175,7 +175,10 @@ public class Recording {
 
     public int getDurationInMs() {
         long fs = getFileSize();
-        return (int) (fs / (Config.sampleRate / 1000 * 2));
+        if(fs >= 2){
+            return (int) (fs / (Config.sampleRate / 1000 * 2));
+        }
+        else return 0;
     }
 
     private int skipToNumberOfBytes(double skip) {

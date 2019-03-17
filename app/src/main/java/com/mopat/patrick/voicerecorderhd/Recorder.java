@@ -7,7 +7,6 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -90,6 +89,7 @@ public class Recorder {
             os = new FileOutputStream(recordingPath);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return;
         }
 
         state = 1;
@@ -138,7 +138,6 @@ public class Recorder {
             try {
                 byties = bytesList.toArray(new Byte[bytesList.size()]);
             } catch (OutOfMemoryError e) {
-                Toast.makeText(context, "Yo ran out of memory. Recording was stopped. ", Toast.LENGTH_LONG).show();
                 stopRecording();
                 maximumRecordingSizeReached();
                 os.close();
@@ -147,11 +146,16 @@ public class Recorder {
 
             byte[] bytes = toByte(byties);
             if (bytes == null) {
-                Toast.makeText(context, "Yo ran out of memory. Recording was stopped. ", Toast.LENGTH_LONG).show();
                 stopRecording();
                 maximumRecordingSizeReached();
             } else {
-                os.write(toByte(byties));
+                try {
+                    os.write(toByte(byties));
+                } catch (NullPointerException e) {
+                    stopRecording();
+                    os.close();
+                    e.printStackTrace();
+                }
             }
             os.close();
         } catch (IOException e) {

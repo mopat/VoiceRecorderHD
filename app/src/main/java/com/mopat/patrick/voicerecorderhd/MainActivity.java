@@ -2,6 +2,7 @@ package com.mopat.patrick.voicerecorderhd;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,8 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -49,7 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PlaybackListener, CompletionListener, PauseListener, PlayListener, StopListener, RecordingListener {
-    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton, setSamplerateButton;
+    private ImageButton recordButton, playButton, myRecordingsButton, stopButton, pauseRecordingButton, cancelRecordingbutton;
     private Recorder recorder;
     private Recording recording;
     private SeekBar seekBar;
@@ -108,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
-            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder Pro", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You need to grant all Permissions for using this HD Voice Recorder", Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -140,7 +143,8 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     }
 
 
-    private void init() {
+    private void init() {    String[] samplerateArray;
+
         recordButton = (ImageButton) findViewById(R.id.record_button);
         playButton = (ImageButton) findViewById(R.id.play_button);
         seekBar = (SeekBar) findViewById(R.id.seekbar_main);
@@ -150,6 +154,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
         cancelRecordingbutton = (ImageButton) findViewById(R.id.cancel_recording_button);
         setSamplerateButton = (ImageButton) findViewById(R.id.set_samplerate_button);
         samplerateSpinner = (Spinner) findViewById(R.id.samplerate_spinner);
+        samplerateArray= getResources().getStringArray(R.array.samplerate_array);
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this,R.layout.spinner_listitem,samplerateArray
+        );
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_listitem);
+        samplerateSpinner.setAdapter(spinnerArrayAdapter);
         playbackTime = (TextView) findViewById(R.id.playback_time);
         durationTime = (TextView) findViewById(R.id.duration_time);
         filenameTextView = (TextView) findViewById(R.id.filename_text_view);
@@ -177,7 +188,13 @@ public class MainActivity extends AppCompatActivity implements PlaybackListener,
     private void setupVisualizerFxAndUI() {
         // Create the Visualizer object and attach it to our media player.
         mVisualizer = new Visualizer(0);
-        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
+        if(Visualizer.getCaptureSizeRange().length > 0){
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[0]);
+        }
+        else{
+            mVisualizer.setCaptureSize(1024);
+
+        }
     }
 
     private void showSaveDialog() {
